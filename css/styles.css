@@ -1,0 +1,154 @@
+/* 1. Reset básico para evitar estilos por defecto del navegador */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 2. Establecer tipografía y color base */
+html {
+    font-size: 16px;
+    /* fácil de escalar con rem */
+}
+
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    line-height: 1.5;
+    background-color: #fff;
+    color: #333;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+/* 3. Asegurar que imágenes y videos no rompan el layout */
+img,
+video {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 4. Enlaces sin subrayado por defecto, pero con color visible */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* 5. Quitar viñetas y sangrías de listas */
+ul,
+ol {
+    list-style: none;
+}
+
+/* 6. Formularios con estilos consistentes */
+input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+/* 7. Botones con cursor pointer */
+button {
+    cursor: pointer;
+}
+
+/* DISEÑO DEL LOGO */
+.logoContainer {
+
+    width: 10em;
+    display: flex;
+    background-color: #FFF;
+
+}
+
+.logo {
+
+    border: 2.5px solid #000;
+
+
+}
+
+
+.firstLogo p {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5em;
+    height: 60x;
+    width: 60px;
+
+    font-weight: bold;
+
+
+}
+
+.logo:nth-child(2) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000;
+    color: #fff;
+    font-weight: bold;
+}
+
+.logo:nth-child(2) p {
+    padding: 0 1em;
+}
+
+.loginMain {
+
+    display: flex;
+    height: 100vh;
+    background-color: #f5f5f5;
+}
+
+.loginMain section {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+/* configuracion de login */
+.loginMain .loginInputs {
+    display: flex;
+    position: relative;
+}
+
+.loginInputs form {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 3em;
+    align-items: center;
+}
+
+.loginInputs form .inputContainer {
+    display: flex;
+    flex-direction: column;
+    width: 20em;
+    gap: 0.5em;
+}
+
+.textLogin {
+    width: 100%;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    position: relative;
+    text-align: center;
+    font-size: 1.5em;
+
+}
+
+.loginInputs form .inputContainer:last-child {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+}
