@@ -1,58 +1,77 @@
-import { useState} from "react";
-export const LoginForm = ({ onSubmit }) => {
-  const [FormValue, setFormValue] = useState({
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+export const LoginForm = () => {
+  const [formValue, setFormValue] = useState({
     username: "",
-    password: ""
+    password: "",
   });
-
   const [errors, setErrors] = useState({});
+  const [serverMessage, setServerMessage] = useState("");
+  const navigate = useNavigate();
 
-  //cambiar los inputs que se tiene almacenado
   const handleChange = (e) => {
-    setFormValue({ ...FormValue, [e.target.name]: e.target.value });
+    setFormValue({ ...formValue, [e.target.name]: e.target.value });
+  };
 
-  }
   const validation = () => {
     const newErrors = {};
-    if (!FormValue.username.trim()) newErrors.username = "El nombre de Usuario es Requerido";
-    if (!FormValue.password.trim()) newErrors.password = "La contraseña es Requerida";
+    if (!formValue.username.trim()) newErrors.username = "El nombre de Usuario es Requerido";
+    if (!formValue.password.trim()) newErrors.password = "La contraseña es Requerida";
+    return newErrors;
+  };
 
-    return newErrors
-  }
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validateErrors = validation();
     setErrors(validateErrors);
+
     if (Object.keys(validateErrors).length === 0) {
-      onSubmit(FormValue)
+      try {
+        console.log("📤 Enviando:", formValue);
+        const res = await fetch("http://localhost/vivanda-main/vivanda/backend/login.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formValue),
+        });
+
+        const data = await res.json();
+        console.log("📥 Respuesta:", data);
+        setServerMessage(data.message);
+
+        if (data.status === "success") {
+          // Guardar sesión en localStorage
+          localStorage.setItem("usuario", JSON.stringify(data.usuario));
+          // Redirigir al Home
+          navigate("/home");
+        } else {
+          alert("Error" + data.message);
+        }
+      } catch (error) {
+        setServerMessage("Error en la conexión con el servidor");
+      }
     }
-  }
+  };
+
   return (
     <form className="login-form" onSubmit={handleSubmit} noValidate>
       <input
-        type="text"
-        placeholder="Username"
-        className="login-input"
-        name="username"
-        onChange={handleChange}
-      />
+        type="text" placeholder="Username" className="login-input" name="username" onChange={handleChange}/>
       {errors.username && <p className="error">{errors.username}</p>}
       <input
-        type="password"
-        placeholder="Password"
-        className="login-input"
-        name="password"
-        onChange={handleChange}
-      />
+        type="password" placeholder="Password" className="login-input" name="password" onChange={handleChange}/>
       {errors.password && <p className="error">{errors.password}</p>}
+
       <div className="login-options">
         <label>
           <input type="checkbox" /> Recordar
         </label>
-        <a href="#" className="login-forgot">Olvidaste tu contraseña?</a>
+        <a href="#" className="login-forgot">¿Olvidaste tu contraseña?</a>
       </div>
+
       <button type="submit" className="login-btn">Ingresar</button>
+
+      {serverMessage && <p>{serverMessage}</p>}
     </form>
   );
 };
