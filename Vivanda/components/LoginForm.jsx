@@ -56,12 +56,30 @@ export const LoginForm = () => {
   return (
     <form className="login-form" onSubmit={handleSubmit} noValidate>
       <input
+<<<<<<< HEAD
         type="text" placeholder="Username" className="login-input" name="username" onChange={handleChange}/>
       {errors.username && <p className="error">{errors.username}</p>}
       <input
         type="password" placeholder="Password" className="login-input" name="password" onChange={handleChange}/>
       {errors.password && <p className="error">{errors.password}</p>}
 
+=======
+        type="text"
+        placeholder="Username"
+        className="login-input"
+        name="username"
+        onChange={handleChange}
+      />
+      {errors.username && <p className="LoginError">{errors.username}</p>}
+      <input
+        type="password"
+        placeholder="Password"
+        className="login-input"
+        name="password"
+        onChange={handleChange}
+      />
+      {errors.password && <p className="LoginError">{errors.password}</p>}
+>>>>>>> 7ef739a (CCS Cambios)
       <div className="login-options">
         <label>
           <input type="checkbox" /> Recordar

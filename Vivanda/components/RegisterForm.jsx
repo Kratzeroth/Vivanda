@@ -70,6 +70,7 @@ export const RegisterForm = () => {
   return (
     <form className="register-form" onSubmit={handleSubmit} noValidate>
       <input
+<<<<<<< HEAD
         type="text" name="nombres" placeholder="Nombres" className="register-input" value={formValue.nombres} onChange={handleChange}/>
         {errors.nombres && <span className="error">{errors.nombres}</span>}
       <input
@@ -90,6 +91,71 @@ export const RegisterForm = () => {
       
       <button type="submit" className="register-btn">Registrar</button>
       {serverMessage && <p className="server-message">{serverMessage}</p>}
+=======
+        type="text"
+        name="nombre"
+        placeholder="Nombres"
+        className="register-input"
+        value={formValue.nombre}
+        onChange={handleChange}
+      />
+      {errors.nombre && <span className="RegisterError">{errors.nombre}</span>}
+
+      <input
+        type="text"
+        name="apellido"
+        placeholder="Apellidos"
+        className="register-input"
+        value={formValue.apellido}
+        onChange={handleChange}
+      />
+      {errors.apellido && <span className="RegisterError">{errors.apellido}</span>}
+
+      <input
+        type="text"
+        name="telefono"
+        placeholder="Telefono"
+        className="register-input"
+        value={formValue.telefono}
+        onChange={handleChange}
+      />
+      {errors.telefono && <span className="RegisterError">{errors.telefono}</span>}
+
+      <input
+        type="email"
+        name="correo"
+        placeholder="Correo"
+        className="register-input"
+        value={formValue.correo}
+        
+        onChange={handleChange}
+      />
+      {errors.correo && <span className="RegisterError">{errors.correo}</span>}
+
+      <input
+        type="password"
+        name="password"
+        placeholder="Contraseña"
+        className="register-input"
+        value={formValue.password}
+        onChange={handleChange}
+      />
+      {errors.password && <span className="RegisterError">{errors.password}</span>}
+
+      <input
+        type="password"
+        name="repetir"
+        placeholder="Repetir"
+        className="register-input"
+        value={formValue.repetir}
+        onChange={handleChange}
+      />
+      {errors.repetir && <span className="RegisterError">{errors.repetir}</span>}
+
+      <button type="submit" className="register-btn">
+        Register
+      </button>
+>>>>>>> 7ef739a (CCS Cambios)
     </form>
   );
 };

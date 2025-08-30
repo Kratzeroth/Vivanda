@@ -272,6 +272,9 @@ button {
   color: var(--login-grad-end);
   text-decoration: none;
 }
+.RegisterError, .LoginError{
+  color: #ff0004;
+}
 
 /* =======================
    RESPONSIVE
