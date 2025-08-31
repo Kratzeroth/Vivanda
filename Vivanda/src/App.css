@@ -1,0 +1,333 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+  line-height: 1.5;
+  height: 100vh;
+  color: #333;
+}
+
+html,
+body {
+  font-size: 16px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* =======================
+   Variables
+   ======================= */
+:root {
+  --login-grad-start: #6a11cb;
+  --login-grad-end:   #2575fc;
+  --login-text:       #333;
+  --login-card-bg:    #ffffff;
+  --login-input-bg:   #f7f7f7;
+  --login-border:     #dddddd;
+  --login-link:       #6a11cb;
+
+  --radius: 12px;
+  --shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  --pad-box: 32px;
+  --gap: 14px;
+  --box-w: 360px;
+  --fs-title: clamp(22px, 2.2vw, 28px);
+  --fs-text: 16px;
+}
+
+/* =======================
+   LOGIN
+   ======================= */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: linear-gradient(135deg, var(--login-grad-start), var(--login-grad-end));
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--login-text);
+}
+.login-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 2;
+}
+.background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+.login-box {
+  position: relative;
+  z-index: 2;
+}
+
+
+.login-box {
+  width: min(100%, var(--box-w));
+  background: var(--login-card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--pad-box);
+}
+
+.login-title {
+  font-size: var(--fs-title);
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  text-align: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.login-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--login-border);
+  border-radius: 8px;
+  background: var(--login-input-bg);
+  font-size: var(--fs-text);
+  outline: none;
+  color: var(--login-text);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-input:focus {
+  border-color: var(--login-grad-start);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--login-grad-start) 20%, transparent);
+}
+
+.login-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.95rem;
+}
+
+.login-forgot {
+  color: var(--login-link);
+  text-decoration: none;
+}
+
+.login-forgot:hover {
+  text-decoration: underline;
+}
+
+.login-btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, var(--login-grad-start), var(--login-grad-end));
+  transition: transform 0.06s ease, opacity 0.2s ease;
+}
+
+.login-btn:hover {
+  opacity: 0.95;
+}
+
+.login-btn:active {
+  transform: translateY(1px);
+}
+
+.login-box p, .register-box p {
+  text-align: center;
+}
+/* =======================
+   REGISTER 
+   ======================= */
+.register-container {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: linear-gradient(135deg, var(--login-grad-start), var(--login-grad-end));
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--login-text);
+}
+
+.register-container::before{
+  content: " ";
+  background-color: rgba(0,0,0,0.4);
+  position: absolute;
+  top:0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.register-box {
+  width: min(100%, var(--box-w));
+  background: var(--login-card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--pad-box);
+  z-index: 3;
+}
+
+.register-title {
+  font-size: var(--fs-title);
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  text-align: center;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.register-input {
+  width: 100%;
+  color: var(--login-text);
+  padding: 12px 14px;
+  border: 1px solid var(--login-border);
+  border-radius: 8px;
+  background: var(--login-input-bg);
+  font-size: var(--fs-text);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.register-input:focus {
+  border-color: var(--login-grad-start);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--login-grad-start) 20%, transparent);
+}
+
+.register-btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, var(--login-grad-start), var(--login-grad-end));
+  transition: transform 0.06s ease, opacity 0.2s ease;
+}
+
+.register-btn:hover {
+  opacity: 0.95;
+}
+
+.register-btn:active {
+  transform: translateY(1px);
+}
+.login-link {
+  color: var(--login-grad-end);
+  text-decoration: none;
+}
+
+/* =======================
+   RESPONSIVE
+   ======================= */
+@media (max-width: 1024px) {
+  :root {
+    --box-w: 420px;
+    --pad-box: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --box-w: 92vw;
+    --pad-box: 24px;
+    --gap: 12px;
+  }
+
+  .login-container,
+  .register-container {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --pad-box: 20px;
+    --fs-text: 15px;
+  }
+
+  .login-title,
+  .register-title {
+    margin-bottom: 12px;
+  }
+}
+
+@media (min-width: 1920px) {
+  :root {
+    --box-w: 420px;
+    --fs-title: 30px;
+    --fs-text: 17px;
+  }
+}
+
+@media (min-width: 2560px) {
+  :root {
+    --box-w: 520px;
+    --pad-box: 40px;
+    --fs-title: 34px;
+    --fs-text: 18px;
+  }
+
+  .login-input,
+  .login-btn,
+  .register-input,
+  .register-btn {
+    padding: 14px 16px;
+  }
+}
