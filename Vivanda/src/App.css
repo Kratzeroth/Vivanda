@@ -6,18 +6,22 @@
 }
 
 body {
+
   font-family: sans-serif;
   line-height: 1.5;
-  height: 100vh;
   color: #333;
+
 }
 
 html,
 body {
+
   font-size: 16px;
   width: 100%;
   margin: 0;
   padding: 0;
+
+  
 }
 
 img,
@@ -52,12 +56,12 @@ button {
    ======================= */
 :root {
   --login-grad-start: #6a11cb;
-  --login-grad-end:   #2575fc;
-  --login-text:       #333;
-  --login-card-bg:    #ffffff;
-  --login-input-bg:   #f7f7f7;
-  --login-border:     #dddddd;
-  --login-link:       #6a11cb;
+  --login-grad-end: #2575fc;
+  --login-text: #333;
+  --login-card-bg: #ffffff;
+  --login-input-bg: #f7f7f7;
+  --login-border: #dddddd;
+  --login-link: #6a11cb;
 
   --radius: 12px;
   --shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
@@ -71,16 +75,26 @@ button {
 /* =======================
    LOGIN
    ======================= */
-.login-container {
+.login {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
+
+}
+
+.login-container {
+  flex: 1;
+  /* ocupa el espacio restante debajo del header */
   display: flex;
   align-items: center;
+  /* centra verticalmente */
   justify-content: center;
-  padding: 24px;
+  /* centra horizontalmente */
   background: linear-gradient(135deg, var(--login-grad-start), var(--login-grad-end));
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color: var(--login-text);
 }
+
 .login-container::before {
   content: "";
   position: absolute;
@@ -88,21 +102,28 @@ button {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0, 0, 0, 0.4);
   z-index: 2;
 }
+
 .background-video {
+
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: 1;
+  z-index: 2;
 }
+
 .login-box {
+
   position: relative;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 
@@ -122,9 +143,12 @@ button {
 }
 
 .login-form {
+
   display: flex;
   flex-direction: column;
   gap: var(--gap);
+  width: 100%;
+  padding: 0 25px ;
 }
 
 .login-input {
@@ -146,6 +170,7 @@ button {
 
 .login-options {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
@@ -181,42 +206,54 @@ button {
   transform: translateY(1px);
 }
 
-.login-box p, .register-box p {
+.login-box p,
+.register-box p {
   text-align: center;
 }
+
 /* =======================
    REGISTER 
    ======================= */
-.register-container {
+.register {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  position: relative;
+}
+
+
+.register-container {
+   flex: 1; 
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  position: relative;
+  width: 100%;
   background: linear-gradient(135deg, var(--login-grad-start), var(--login-grad-end));
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  color: var(--login-text);
+
 }
 
-.register-container::before{
-  content: " ";
-  background-color: rgba(0,0,0,0.4);
+.register-container::before {
+  content: "";
+  background-color: rgba(0, 0, 0, 0.4);
   position: absolute;
-  top:0;
+  top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 2;
+  z-index: 3;
 }
 
 .register-box {
-  width: min(100%, var(--box-w));
-  background: var(--login-card-bg);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: var(--pad-box);
-  z-index: 3;
+  background: rgba(255, 255, 255, 0.9);
+  /* caja clara encima del video */
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 400px;
+  /* tamaño máximo en desktop */
+  text-align: center;
+  z-index: 999;
 }
 
 .register-title {
@@ -268,12 +305,10 @@ button {
 .register-btn:active {
   transform: translateY(1px);
 }
+
 .login-link {
   color: var(--login-grad-end);
   text-decoration: none;
-}
-.RegisterError, .LoginError{
-  color: #ff0004;
 }
 
 /* =======================
@@ -297,6 +332,8 @@ button {
   .register-container {
     padding: 16px;
   }
+
+
 }
 
 @media (max-width: 480px) {
@@ -309,6 +346,17 @@ button {
   .register-title {
     margin-bottom: 12px;
   }
+
+  .login-container {
+    position: static;
+
+  }
+
+  .register-box,
+  .login-box {
+    justify-self: flex-end;
+  }
+
 }
 
 @media (min-width: 1920px) {

@@ -71,6 +71,7 @@ export const RegisterForm = () => {
     <form className="register-form" onSubmit={handleSubmit} noValidate>
       <input
 <<<<<<< HEAD
+<<<<<<< HEAD
         type="text" name="nombres" placeholder="Nombres" className="register-input" value={formValue.nombres} onChange={handleChange}/>
         {errors.nombres && <span className="error">{errors.nombres}</span>}
       <input
@@ -101,48 +102,24 @@ export const RegisterForm = () => {
       />
       {errors.nombre && <span className="RegisterError">{errors.nombre}</span>}
 
+=======
+        type="text" name="nombres" placeholder="Nombres" className="register-input" value={formValue.nombres} onChange={handleChange}/>
+        {errors.nombres && <span className="error">{errors.nombres}</span>}
+>>>>>>> 0054bc7 (integracion del main)
       <input
-        type="text"
-        name="apellido"
-        placeholder="Apellidos"
-        className="register-input"
-        value={formValue.apellido}
-        onChange={handleChange}
-      />
-      {errors.apellido && <span className="RegisterError">{errors.apellido}</span>}
-
+        type="text" name="apellidos" placeholder="Apellidos" className="register-input" value={formValue.apellidos} onChange={handleChange}/>
+      {errors.apellidos && <span className="error">{errors.apellidos}</span>}
       <input
-        type="text"
-        name="telefono"
-        placeholder="Telefono"
-        className="register-input"
-        value={formValue.telefono}
-        onChange={handleChange}
-      />
-      {errors.telefono && <span className="RegisterError">{errors.telefono}</span>}
-
+        type="text" name="telefono" placeholder="Telefono" className="register-input" value={formValue.telefono} onChange={handleChange}/>
+      {errors.telefono && <span className="error">{errors.telefono}</span>}
       <input
-        type="email"
-        name="correo"
-        placeholder="Correo"
-        className="register-input"
-        value={formValue.correo}
-        
-        onChange={handleChange}
-      />
-      {errors.correo && <span className="RegisterError">{errors.correo}</span>}
-
+        type="email" name="correo" placeholder="Correo" className="register-input" value={formValue.correo} onChange={handleChange}/>
+      {errors.correo && <span className="error">{errors.correo}</span>}
       <input
-        type="password"
-        name="password"
-        placeholder="Contraseña"
-        className="register-input"
-        value={formValue.password}
-        onChange={handleChange}
-      />
-      {errors.password && <span className="RegisterError">{errors.password}</span>}
-
+        type="password" name="password" placeholder="Contraseña" className="register-input" value={formValue.password} onChange={handleChange}/>
+      {errors.password && <span className="error">{errors.password}</span>}
       <input
+<<<<<<< HEAD
         type="password"
         name="repetir"
         placeholder="Repetir"
@@ -156,6 +133,13 @@ export const RegisterForm = () => {
         Register
       </button>
 >>>>>>> 7ef739a (CCS Cambios)
+=======
+        type="password" name="repetir" placeholder="Repetir Contraseña" className="register-input" value={formValue.repetir} onChange={handleChange}/>
+      {errors.repetir && <span className="error">{errors.repetir}</span>}
+      
+      <button type="submit" className="register-btn">Registrar</button>
+      {serverMessage && <p className="server-message">{serverMessage}</p>}
+>>>>>>> 0054bc7 (integracion del main)
     </form>
   );
 };
