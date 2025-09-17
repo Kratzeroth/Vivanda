@@ -29,25 +29,26 @@ export const LoginForm = () => {
     if (Object.keys(validateErrors).length === 0) {
       try {
         console.log("📤 Enviando:", formValue);
-        const res = await fetch("http://localhost/vivanda-main/vivanda/backend/login.php", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formValue),
-        });
+        const res = await fetch(
+          "http://localhost/vivanda-main/vivanda/backend/login.php",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formValue),
+          }
+        );
 
         const data = await res.json();
         console.log("📥 Respuesta:", data);
         setServerMessage(data.message);
 
         if (data.status === "success") {
-          // Guardar sesión en localStorage
           localStorage.setItem("usuario", JSON.stringify(data.usuario));
-          // Redirigir al Home
           navigate("/home");
         } else {
-          alert("Error" + data.message);
+          alert("Error: " + data.message);
         }
-      } catch (error) {
+      } catch {
         setServerMessage("Error en la conexión con el servidor");
       }
     }
@@ -56,39 +57,25 @@ export const LoginForm = () => {
   return (
     <form className="login-form" onSubmit={handleSubmit} noValidate>
       <input
-<<<<<<< HEAD
-<<<<<<< HEAD
-        type="text" placeholder="Username" className="login-input" name="username" onChange={handleChange}/>
-      {errors.username && <p className="error">{errors.username}</p>}
-      <input
-        type="password" placeholder="Password" className="login-input" name="password" onChange={handleChange}/>
-      {errors.password && <p className="error">{errors.password}</p>}
-
-=======
         type="text"
         placeholder="Username"
         className="login-input"
         name="username"
+        value={formValue.username}
         onChange={handleChange}
       />
-      {errors.username && <p className="LoginError">{errors.username}</p>}
+      {errors.username && <p className="error">{errors.username}</p>}
+
       <input
         type="password"
         placeholder="Password"
         className="login-input"
         name="password"
+        value={formValue.password}
         onChange={handleChange}
       />
-      {errors.password && <p className="LoginError">{errors.password}</p>}
->>>>>>> 7ef739a (CCS Cambios)
-=======
-        type="text" placeholder="Username" className="login-input" name="username" onChange={handleChange}/>
-      {errors.username && <p className="error">{errors.username}</p>}
-      <input
-        type="password" placeholder="Password" className="login-input" name="password" onChange={handleChange}/>
       {errors.password && <p className="error">{errors.password}</p>}
 
->>>>>>> 0054bc7 (integracion del main)
       <div className="login-options">
         <label>
           <input type="checkbox" /> Recordar
@@ -98,7 +85,7 @@ export const LoginForm = () => {
 
       <button type="submit" className="login-btn">Ingresar</button>
 
-      {serverMessage && <p>{serverMessage}</p>}
+      {serverMessage && <p className="server-message">{serverMessage}</p>}
     </form>
   );
 };

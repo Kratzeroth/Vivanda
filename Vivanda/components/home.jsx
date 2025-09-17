@@ -20,14 +20,14 @@ const featuredProducts = [
   { id: 3, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
   { id: 4, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
   { id: 5, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 5, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 5, name: "333", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 5, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 5, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 5, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 5, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 5, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 5, name: "123", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
+  { id: 6, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
+  { id: 7, name: "333", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
+  { id: 8, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
+  { id: 9, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
+  { id: 10, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
+  { id: 11, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
+  { id: 12, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
+  { id: 13, name: "123", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
 ];
 
 export const Home = () => {
@@ -136,8 +136,7 @@ export const Home = () => {
       <Footer />
     </div>
   );
-<<<<<<< HEAD
+
 }
-=======
-};
->>>>>>> 0054bc7 (integracion del main)
+
+

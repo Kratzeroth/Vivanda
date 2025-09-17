@@ -9,6 +9,7 @@ export const RegisterForm = () => {
     password: "",
     repetir: "",
   });
+
   const [errors, setErrors] = useState({});
   const [serverMessage, setServerMessage] = useState("");
 
@@ -48,11 +49,14 @@ export const RegisterForm = () => {
         password: formValue.password,
       };
 
-      const res = await fetch("http://localhost/vivanda-main/vivanda/backend/register.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        "http://localhost/vivanda-main/vivanda/backend/register.php",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
 
       const data = await res.json();
       setServerMessage(data.message);
@@ -60,7 +64,7 @@ export const RegisterForm = () => {
       if (data.status === "success") {
         alert("Registro exitoso. Tu usuario es: " + data.username);
       } else {
-        alert("Error" + data.message);
+        alert("Error: " + data.message);
       }
     } catch {
       setServerMessage("Error en la conexión con el servidor");
@@ -70,76 +74,70 @@ export const RegisterForm = () => {
   return (
     <form className="register-form" onSubmit={handleSubmit} noValidate>
       <input
-<<<<<<< HEAD
-<<<<<<< HEAD
-        type="text" name="nombres" placeholder="Nombres" className="register-input" value={formValue.nombres} onChange={handleChange}/>
-        {errors.nombres && <span className="error">{errors.nombres}</span>}
-      <input
-        type="text" name="apellidos" placeholder="Apellidos" className="register-input" value={formValue.apellidos} onChange={handleChange}/>
-      {errors.apellidos && <span className="error">{errors.apellidos}</span>}
-      <input
-        type="text" name="telefono" placeholder="Telefono" className="register-input" value={formValue.telefono} onChange={handleChange}/>
-      {errors.telefono && <span className="error">{errors.telefono}</span>}
-      <input
-        type="email" name="correo" placeholder="Correo" className="register-input" value={formValue.correo} onChange={handleChange}/>
-      {errors.correo && <span className="error">{errors.correo}</span>}
-      <input
-        type="password" name="password" placeholder="Contraseña" className="register-input" value={formValue.password} onChange={handleChange}/>
-      {errors.password && <span className="error">{errors.password}</span>}
-      <input
-        type="password" name="repetir" placeholder="Repetir Contraseña" className="register-input" value={formValue.repetir} onChange={handleChange}/>
-      {errors.repetir && <span className="error">{errors.repetir}</span>}
-      
-      <button type="submit" className="register-btn">Registrar</button>
-      {serverMessage && <p className="server-message">{serverMessage}</p>}
-=======
         type="text"
-        name="nombre"
+        name="nombres"
         placeholder="Nombres"
         className="register-input"
-        value={formValue.nombre}
+        value={formValue.nombres}
         onChange={handleChange}
       />
-      {errors.nombre && <span className="RegisterError">{errors.nombre}</span>}
+      {errors.nombres && <span className="error">{errors.nombres}</span>}
 
-=======
-        type="text" name="nombres" placeholder="Nombres" className="register-input" value={formValue.nombres} onChange={handleChange}/>
-        {errors.nombres && <span className="error">{errors.nombres}</span>}
->>>>>>> 0054bc7 (integracion del main)
       <input
-        type="text" name="apellidos" placeholder="Apellidos" className="register-input" value={formValue.apellidos} onChange={handleChange}/>
+        type="text"
+        name="apellidos"
+        placeholder="Apellidos"
+        className="register-input"
+        value={formValue.apellidos}
+        onChange={handleChange}
+      />
       {errors.apellidos && <span className="error">{errors.apellidos}</span>}
+
       <input
-        type="text" name="telefono" placeholder="Telefono" className="register-input" value={formValue.telefono} onChange={handleChange}/>
+        type="text"
+        name="telefono"
+        placeholder="Teléfono"
+        className="register-input"
+        value={formValue.telefono}
+        onChange={handleChange}
+      />
       {errors.telefono && <span className="error">{errors.telefono}</span>}
+
       <input
-        type="email" name="correo" placeholder="Correo" className="register-input" value={formValue.correo} onChange={handleChange}/>
+        type="email"
+        name="correo"
+        placeholder="Correo"
+        className="register-input"
+        value={formValue.correo}
+        onChange={handleChange}
+      />
       {errors.correo && <span className="error">{errors.correo}</span>}
+
       <input
-        type="password" name="password" placeholder="Contraseña" className="register-input" value={formValue.password} onChange={handleChange}/>
+        type="password"
+        name="password"
+        placeholder="Contraseña"
+        className="register-input"
+        value={formValue.password}
+        onChange={handleChange}
+      />
       {errors.password && <span className="error">{errors.password}</span>}
+
       <input
-<<<<<<< HEAD
         type="password"
         name="repetir"
-        placeholder="Repetir"
+        placeholder="Repetir Contraseña"
         className="register-input"
         value={formValue.repetir}
         onChange={handleChange}
       />
-      {errors.repetir && <span className="RegisterError">{errors.repetir}</span>}
+      {errors.repetir && <span className="error">{errors.repetir}</span>}
 
       <button type="submit" className="register-btn">
-        Register
+        Registrar
       </button>
->>>>>>> 7ef739a (CCS Cambios)
-=======
-        type="password" name="repetir" placeholder="Repetir Contraseña" className="register-input" value={formValue.repetir} onChange={handleChange}/>
-      {errors.repetir && <span className="error">{errors.repetir}</span>}
-      
-      <button type="submit" className="register-btn">Registrar</button>
+
       {serverMessage && <p className="server-message">{serverMessage}</p>}
->>>>>>> 0054bc7 (integracion del main)
     </form>
   );
 };
