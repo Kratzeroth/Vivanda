@@ -19,7 +19,7 @@ export const Header = () => {
                     <input className="header-SearchInput" type="text" placeholder="Buscar..." />
                     <ul className="header-Menu">
                         <li><Link to="/home">Inicio</Link></li>
-                        <li><Link to="/productos">Productos</Link></li>
+                        <li><Link to="/products">Productos</Link></li>
                         <li><Link to="/ofertas">Ofertas</Link></li>
                         <li><Link to="/nosotros">Nosotros</Link></li>
                     </ul>
