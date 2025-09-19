@@ -14,10 +14,15 @@ if (!isset($data["username"], $data["password"])) {
 }
 
 try {   
-    $stmt = $pdo->prepare("SELECT c.id_credencial, c.contrasena_hash, u.id_usuario, u.nombres, u.apellidos, u.correo
-                           FROM credenciales c
-                           JOIN usuarios u ON c.id_usuario = u.id_usuario
-                           WHERE c.username = ? AND c.activo = 1 LIMIT 1");
+    $stmt = $pdo->prepare("
+        SELECT c.id_credencial, c.contrasena_hash, u.id_usuario, u.nombres, u.apellidos, u.correo, r.nombre_rol
+        FROM credenciales c
+        JOIN usuarios u ON c.id_usuario = u.id_usuario
+        JOIN usuario_roles ur ON u.id_usuario = ur.id_usuario
+        JOIN roles r ON ur.id_rol = r.id_rol
+        WHERE c.username = ? AND c.activo = 1
+        LIMIT 1
+    ");
     $stmt->execute([$data["username"]]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -30,8 +35,10 @@ try {
             "status" => "success",
             "message" => "Login correcto",
             "usuario" => [
+                "id"     => $user["id_usuario"],
                 "nombre" => $user["nombres"] . " " . $user["apellidos"],
-                "correo" => $user["correo"]
+                "correo" => $user["correo"],
+                "rol"    => $user["nombre_rol"] // nuevo
             ]
         ]);
     } else {

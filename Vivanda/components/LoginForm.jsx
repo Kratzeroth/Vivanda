@@ -29,26 +29,28 @@ export const LoginForm = () => {
     if (Object.keys(validateErrors).length === 0) {
       try {
         console.log("📤 Enviando:", formValue);
-        const res = await fetch(
-          "http://localhost/vivanda-main/vivanda/backend/login.php",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formValue),
-          }
-        );
+        const res = await fetch("http://localhost/Vivanda/Vivanda/backend/login.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formValue),
+        });
 
         const data = await res.json();
         console.log("📥 Respuesta:", data);
         setServerMessage(data.message);
 
         if (data.status === "success") {
+          // Guardar sesión en localStorage
           localStorage.setItem("usuario", JSON.stringify(data.usuario));
-          navigate("/home");
-        } else {
-          alert("Error: " + data.message);
-        }
-      } catch {
+          if (data.usuario.rol === "Administrador") {
+    navigate("/admin");  // 🚀 si es admin → al panel admin
+  } else {
+    navigate("/home");   // 🚀 si es usuario normal → home
+  }
+} else {
+  alert("Error: " + data.message);
+}
+      } catch (error) {
         setServerMessage("Error en la conexión con el servidor");
       }
     }
@@ -57,23 +59,10 @@ export const LoginForm = () => {
   return (
     <form className="login-form" onSubmit={handleSubmit} noValidate>
       <input
-        type="text"
-        placeholder="Username"
-        className="login-input"
-        name="username"
-        value={formValue.username}
-        onChange={handleChange}
-      />
+        type="text" placeholder="Username" className="login-input" name="username" onChange={handleChange}/>
       {errors.username && <p className="error">{errors.username}</p>}
-
       <input
-        type="password"
-        placeholder="Password"
-        className="login-input"
-        name="password"
-        value={formValue.password}
-        onChange={handleChange}
-      />
+        type="password" placeholder="Password" className="login-input" name="password" onChange={handleChange}/>
       {errors.password && <p className="error">{errors.password}</p>}
 
       <div className="login-options">
@@ -85,7 +74,7 @@ export const LoginForm = () => {
 
       <button type="submit" className="login-btn">Ingresar</button>
 
-      {serverMessage && <p className="server-message">{serverMessage}</p>}
+      {serverMessage && <p>{serverMessage}</p>}
     </form>
   );
 };
