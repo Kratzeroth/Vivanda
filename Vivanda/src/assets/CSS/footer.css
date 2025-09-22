@@ -1,3 +1,6 @@
+footer{
+  justify-self: flex-end;
+}
 .footer-section {
   background-color: #303030;
   padding: 40px 20px;

@@ -1,0 +1,239 @@
+.orders-page {
+  width: 92%;
+  max-width: 1700px; /* bastante ancho para 2K */
+  margin: 30px auto;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+.orders-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.orders-header h1 {
+  font-size: 2.4rem;
+  color: #222;
+  margin-bottom: 8px;
+}
+
+.orders-header p {
+  font-size: 1rem;
+  color: #555;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Tarjeta */
+.order-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.order-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.order-top h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.muted {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.status {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.status-pendientedepago { background: #ff9800; }
+.status-procesando { background: #03a9f4; }
+.status-enviado { background: #2196f3; }
+.status-encamino { background: #673ab7; }
+.status-entregado { background: #4caf50; }
+.status-cancelado { background: #f44336; }
+.status-devuelto { background: #9c27b0; }
+
+/* Cuerpo del pedido */
+.order-body {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.items {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.item {
+  display: flex;
+  gap: 14px;
+  background: #fafafa;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.item img {
+  width: 90px;
+  height: 90px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.item-info {
+  flex: 1;
+}
+
+.item-info .title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.item-info .price {
+  font-weight: 500;
+  color: #222;
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+}
+
+.order-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 240px;
+}
+
+.summary {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+.total {
+  font-size: 1.2rem;
+  color: #111;
+}
+
+.order-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reviews {
+  margin-top: 10px;
+}
+
+.review {
+  background: #f9f9f9;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+.stars {
+  color: #ffb400;
+  font-size: 1rem;
+}
+
+.rev-text {
+  font-size: 0.9rem;
+  margin: 4px 0;
+}
+
+/* Timeline */
+.order-tracking {
+  border-top: 1px solid #eee;
+  margin-top: 14px;
+  padding-top: 10px;
+  font-size: 0.9rem;
+}
+
+/* Botones */
+.btn {
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn.small { font-size: 0.85rem; padding: 6px 10px; }
+.btn.outline { background: transparent; border: 1px solid #666; color: #333; }
+.btn.danger { background: #f44336; color: #fff; }
+.btn.disabled { background: #ccc; color: #777; cursor: not-allowed; }
+
+.btn:hover:not(.disabled) { opacity: 0.9; }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .orders-page {
+    width: 96%;
+  }
+
+  .order-body {
+    flex-direction: column;
+  }
+
+  .item img {
+    width: 70px;
+    height: 70px;
+  }
+
+  .orders-header h1 {
+    font-size: 1.6rem;
+  }
+}
+
+/* Pantallas grandes (2K y más) */
+@media (min-width: 2000px) {
+  .orders-page {
+    max-width: 1900px;
+  }
+
+  .orders-header h1 {
+    font-size: 2.8rem;
+  }
+
+  .order-card {
+    padding: 30px;
+  }
+
+  .item img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .total {
+    font-size: 1.6rem;
+  }
+
+  .btn {
+    font-size: 1.05rem;
+    padding: 12px 18px;
+  }
+}

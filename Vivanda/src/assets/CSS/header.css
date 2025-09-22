@@ -1,10 +1,10 @@
 /* ======== ESTILOS BASE (móviles por defecto) ======== */
 .header-Container {
-     position: sticky;
+    position: sticky;
     top: 0;
     width: 100%;
     padding: 10px 15px;
-    backdrop-filter: blur(50px);
+    background-color: #fff;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 999999;
 }
@@ -16,12 +16,9 @@
     gap: 10px;
 }
 
-
-
 .header-Logo img {
     height: 40px;
     cursor: pointer;
-
 }
 
 .header-Center {
@@ -45,7 +42,6 @@
 .header-SearchInput:focus {
     outline: none;
     border-color: green;
-    
 }
 .header-Menu {
     display: flex;
@@ -56,7 +52,6 @@
     padding: 0;
     margin: 0;
 }
-
 .header-Menu li a {
     text-decoration: none;
     color: #333;
@@ -65,11 +60,9 @@
 }
 
 .header-Right {
-
     display: flex;
     align-items: center;
     gap: 10px;
-
 }
 
 .Icon {
@@ -86,43 +79,87 @@
     border-radius: 5px;
     cursor: pointer;
 }
+.header-Button a {
+    text-decoration: none;
+    color: white;
+}
+
+/* ======== DROPDOWN USUARIO ======== */
+.user-Dropdown {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.user-Name {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+}
+.dropdown-Menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    min-width: 220px;
+    z-index: 9999;
+    padding: 8px 0;
+}
+.dropdown-Menu a,
+.dropdown-Menu button {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    color: #333;
+    text-decoration: none;
+    text-align: left;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.dropdown-Menu a:hover,
+.dropdown-Menu button:hover {
+    background: #f5f5f5;
+    color: green;
+}
 
 /* ======== TABLETS (mínimo 768px) ======== */
 @media(max-width:480px) {
-
     .header-Right {
         position: absolute;
-
         transform: translateY(50%);
         right: 35px;
     }
-
     .header-Logo {
         align-self: flex-start;
         padding: 10px 25px;
     }
 }
-
 @media (min-width: 768px) {
     .header-Nav {
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
     }
-
     .header-Center {
         flex: 1;
     }
-
     .header-SearchInput {
         width: 70%;
         font-size: 1rem;
     }
-
     .header-Menu li a {
         font-size: 1rem;
     }
-
     .header-Button {
         font-size: 1rem;
     }
@@ -133,20 +170,16 @@
     .header-Logo img {
         height: 55px;
     }
-
     .header-SearchInput {
         width: 60%;
         font-size: 1rem;
     }
-
     .header-Menu li a {
         font-size: 1.05rem;
     }
-
     .Icon {
         font-size: 1.6rem;
     }
-
     .header-Button {
         padding: 8px 14px;
         font-size: 1rem;
@@ -158,20 +191,16 @@
     .header-Logo img {
         height: 65px;
     }
-
     .header-SearchInput {
         width: 50%;
         font-size: 1.1rem;
     }
-
     .header-Menu li a {
         font-size: 1.1rem;
     }
-
     .Icon {
         font-size: 1.8rem;
     }
-
     .header-Button {
         padding: 10px 16px;
         font-size: 1.1rem;
