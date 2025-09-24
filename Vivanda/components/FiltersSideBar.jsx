@@ -1,9 +1,25 @@
 import React from "react";
 import "../src/assets/CSS/filter.css";
-export const FiltersSidebar = ({ filters, onChange, onClose, open }) => {
+
+export const FiltersSidebar = ({ filters, categories, onChange, onClose, open }) => {
+
+  // Maneja el cambio del slider (solo enteros)
+  const handleMinRatingChange = (e) => {
+    const value = Math.round(Number(e.target.value)); // forzar entero
+    const syntheticEvent = {
+      target: {
+        name: e.target.name,
+        value: value
+      }
+    };
+    onChange(syntheticEvent);
+  };
+
   return (
     <aside className={`filters-sidebar ${open ? "open" : ""}`}>
       <h4>Filtros</h4>
+
+      {/* Precio */}
       <div className="filter-item">
         <label>Precio</label>
         <div className="filter-range">
@@ -24,47 +40,31 @@ export const FiltersSidebar = ({ filters, onChange, onClose, open }) => {
         </div>
       </div>
 
+      {/* Categoría */}
       <div className="filter-item">
         <label>Categoría</label>
         <select name="category" value={filters.category} onChange={onChange}>
-          <option value="">Todas</option>
-          <option value="Frutas">Frutas</option>
-          <option value="Lácteos">Lácteos</option>
-          <option value="Panadería">Panadería</option>
-          <option value="Bebidas">Bebidas</option>
-          <option value="Cereales">Cereales</option>
-          <option value="Snacks">Snacks</option>
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
         </select>
       </div>
 
+      {/* Calificación mínima */}
       <div className="filter-item">
-        <label>Marca</label>
-        <select name="brand" value={filters.brand} onChange={onChange}>
-          <option value="">Todas</option>
-          <option value="FreshFarm">FreshFarm</option>
-          <option value="LaVaquita">LaVaquita</option>
-          <option value="PanDulce">PanDulce</option>
-          <option value="CheeseCo">CheeseCo</option>
-          <option value="JuiceCo">JuiceCo</option>
-          <option value="CerealCo">CerealCo</option>
-          <option value="SnackCo">SnackCo</option>
-        </select>
-      </div>
-
-      <div className="filter-item">
-        <label>Calificación mínima</label>
+        <label>Calificación mínima: {filters.minRating || 0}</label>
         <input
-          type="number"
+          type="range"
           name="minRating"
-          value={filters.minRating}
-          onChange={onChange}
-          placeholder="0-5"
-          step="0.1"
           min="0"
           max="5"
+          step="1"
+          value={filters.minRating || 0}
+          onChange={handleMinRatingChange}
         />
       </div>
 
+      {/* Descuento */}
       <div className="filter-item">
         <label>Descuento</label>
         <select name="discount" value={filters.discount} onChange={onChange}>

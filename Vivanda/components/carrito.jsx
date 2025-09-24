@@ -1,115 +1,102 @@
-// src/pages/Cart.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "./header";
 import { Footer } from "./footer";
 import "../src/assets/CSS/cart.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const Cart = () => {
-  // Simulación de datos (como si viniera del backend PHP)
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Café Orgánico 500g",
-      price: 25.9,
-      image:
-        "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=400&q=80",
-      quantity: 1,
-      store: "Vivanda - Café & Bebidas",
-    },
-    {
-      id: 2,
-      name: "Manzanas Fuji (1kg)",
-      price: 12.5,
-      image:
-        "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&w=400&q=80",
-      quantity: 2,
-      store: "Vivanda - Frutas & Verduras",
-    },
-  ]);
+  const [cartItems, setCartItems] = useState([]);
+  const [total, setTotal] = useState(0);
+  const navigate = useNavigate();
 
-  // Funciones para aumentar/disminuir cantidad
-  const updateQuantity = (id, delta) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item
-      )
-    );
+  useEffect(() => {
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    if (!usuario) {
+      navigate("/login");
+      return;
+    }
+
+    fetch(`http://localhost/Vivanda/Vivanda/backend/get_cart.php?id_usuario=${usuario.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          setCartItems(data.productos);
+          setTotal(data.total);
+        }
+      })
+      .catch((err) => console.error("Error cargando carrito:", err));
+  }, [navigate]);
+
+  const handleRemove = async (id_producto) => {
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    if (!usuario) return;
+
+    try {
+      const res = await fetch("http://localhost/Vivanda/Vivanda/backend/removeCart.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id_usuario: usuario.id,
+          id_producto: id_producto,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.status === "success") {
+        setCartItems((prev) => prev.filter((item) => item.id_producto !== id_producto));
+        setTotal((prev) => prev - data.precio_eliminado * data.cantidad_eliminada);
+      } else {
+        alert("Error al eliminar: " + data.message);
+      }
+    } catch (error) {
+      console.error("Error eliminando producto:", error);
+      alert("No se pudo eliminar el producto");
+    }
   };
-
-  // Eliminar producto
-  const removeItem = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  // Calcular total
-  const total = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
 
   return (
     <>
       <Header />
 
       <div className="cart-container">
-        <h1>🛒 Carrito de Compras</h1>
+        <h1>Carrito de Compras</h1>
 
         {cartItems.length === 0 ? (
           <p className="empty-cart">Tu carrito está vacío</p>
         ) : (
           <div className="cart-content">
-            {/* Lista de productos */}
             <div className="cart-items">
               {cartItems.map((item) => (
-                <div key={item.id} className="cart-item">
-                  <img src={item.image} alt={item.name} />
+                <div key={item.id_producto} className="cart-item">
+                  <img
+                    src={item.imagen || "images/productos/default.png"}
+                    alt={item.nombre}
+                  />
                   <div className="cart-info">
-                    <h3>{item.name}</h3>
-                    <p className="store">{item.store}</p>
-                    <p className="price">S/ {item.price.toFixed(2)}</p>
-
-                    {/* Controles de cantidad */}
-                    <div className="quantity-controls">
-                      <button onClick={() => updateQuantity(item.id, -1)}>
-                        -
-                      </button>
-                      <span>{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.id, 1)}>
-                        +
-                      </button>
-                    </div>
-
-                    {/* Subtotal */}
+                    <h3>{item.nombre}</h3>
+                    <p className="price">S/ {parseFloat(item.precio).toFixed(2)}</p>
+                    <span>Cantidad: {item.cantidad}</span>
                     <p className="subtotal">
-                      Subtotal: S/ {(item.price * item.quantity).toFixed(2)}
+                      Subtotal: S/ {(item.precio * item.cantidad).toFixed(2)}
                     </p>
+                    <button
+                      className="remove-btn"
+                      onClick={() => handleRemove(item.id_producto)}
+                    >
+                      ✕
+                    </button>
                   </div>
-
-                  {/* Eliminar */}
-                  <button
-                    className="remove-btn"
-                    onClick={() => removeItem(item.id)}
-                  >
-                    ✖
-                  </button>
                 </div>
               ))}
             </div>
 
-            {/* Resumen */}
             <div className="cart-summary">
               <h2>Resumen del pedido</h2>
               <p>Productos: {cartItems.length}</p>
               <p>Total: S/ {total.toFixed(2)}</p>
-              <Link to="/checkout"> <button className="checkout-btn">
-                Continuar con el pago →
-              </button>
+              <Link to="/checkout">
+                <button className="checkout-btn">Continuar con el pago →</button>
               </Link>
-
-
             </div>
           </div>
         )}

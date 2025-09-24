@@ -46,7 +46,8 @@
 }
 
 .hero-btn {
-    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    background-color: #3daf42;
+    color: white;
     border: none;
     font-weight: 600;
     padding: 0.75rem 2rem;
@@ -370,11 +371,11 @@
 .product-price {
     font-weight: 700;
     font-size: 1.1rem;
-    color: #2e7d32;
+    color: #3daf42;
 }
 
 .product-btn {
-    background: #2e7d32;
+    background: #3daf42;
     border: none;
     color: white;
     font-weight: 600;
@@ -425,4 +426,21 @@
     .products-container {
         gap: 1.5rem;
     }
+}
+
+.product-prices {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.price-label {
+    color: #3daf42; /* texto "Precio" en oscuro */
+}
+
+.price-value {
+    color: #3daf42; /* precio en verde */
 }

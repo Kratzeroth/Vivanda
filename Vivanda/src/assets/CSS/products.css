@@ -16,7 +16,7 @@
 /* ===== BOTÓN MOSTRAR FILTROS (MÓVIL) ===== */
 .filters-toggle-btn {
   display: none;
-  background: #1e88e5;
+  background: #66bb6a; /* verde claro */
   color: #fff;
   padding: 12px 20px;
   border-radius: 8px;
@@ -27,7 +27,7 @@
 }
 
 .filters-toggle-btn:hover {
-  background: #1565c0;
+  background: #57a05a;
 }
 
 /* ===== LAYOUT PRINCIPAL ===== */
@@ -36,6 +36,7 @@
   flex: 1;
   gap: 20px;
   box-sizing: border-box;
+  align-items: stretch; /* 🔹 fuerza que los items estiren */
 }
 
 /* ===== LISTA DE PRODUCTOS ===== */
@@ -49,61 +50,83 @@
 .products-list .grid {
   display: grid;
   gap: 20px;
-  grid-template-columns: repeat(4, 1fr);
   margin: 20px 0;
 }
 
 /* ===== TARJETAS DE PRODUCTO ===== */
 .product-card {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 15px;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  text-align: left; /* textos alineados a la izquierda */
+  border: 1px solid #e6e6e6;
+  transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  justify-content: flex-start;
+  align-items: flex-start; /* textos alineados a la izquierda */
 }
 
 .product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .product-card img {
   max-width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 10px;
+  height: 160px;
+  object-fit: contain;
   margin-bottom: 10px;
+  align-self: center; /* 🔹 imagen centrada horizontalmente */
 }
 
-.product-card h5 {
-  font-size: 16px;
-  margin: 5px 0;
-  color: #2c2c2c;
+.product-card .product-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  margin: 10px 0 15px 0; /* 🔹 un poco de espacio debajo de la imagen */
+  min-height: 40px;
+  text-align: left; /* 🔹 nombre alineado a la izquierda */
+  width: 100%;
+}
+/* ===== PRECIOS ===== */
+.price-container {
+  margin: 0 0 10px 0;
+  width: 100%;
 }
 
-.product-card p {
-  font-size: 14px;
-  color: #555555;
-  margin: 3px 0;
+.price-row {
+  display: flex;
+  justify-content: space-between; /* izquierda/derecha */
+  width: 100%;
+  font-size: 15px;
+  font-weight: bold;
+  color: #388e3c;
+  margin-bottom: 4px;
 }
 
-.product-card .btn {
+.price-row.discount {
+  color: #d32f2f;
+  text-decoration: line-through;
+  font-weight: normal;
+}
+
+/* Botón verde claro */
+.product-card .btn-add {
   margin-top: 10px;
-  padding: 8px 12px;
-  background: #1e88e5;
-  color: white;
+  padding: 10px 0;
+  width: 100%;
+  background: #66bb6a;
+  color: #fff;
   border: none;
   border-radius: 6px;
-  cursor: pointer;
   font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  align-self: stretch; /* 🔹 botón ocupa todo el ancho */
 }
 
-.product-card .btn:hover {
-  background: #1565c0;
+.product-card .btn-add:hover {
+  background: #57a05a;
 }
 
 /* ===== PAGINACIÓN ===== */
@@ -116,8 +139,6 @@
   max-width: 100%;
   overflow-x: auto;
   scrollbar-width: thin;
-  position: relative;
-  z-index: 1000;
 }
 
 .pagination button {
@@ -137,13 +158,13 @@
 }
 
 .pagination button.active {
-  background: #1e88e5;
-  color: white;
+  background: #66bb6a;
+  color: #fff;
 }
 
 .pagination button:disabled {
   background: #e0e0e0;
-  color: #888888;
+  color: #888;
   cursor: not-allowed;
 }
 
@@ -151,7 +172,6 @@
 @media (max-width: 1200px) {
   .products-list .grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
   }
 }
 
@@ -162,7 +182,6 @@
 
   .products-list .grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
   }
 
   .filters-toggle-btn {
@@ -173,28 +192,22 @@
 @media (max-width: 768px) {
   .products-list .grid {
     grid-template-columns: 1fr;
-    gap: 14px;
   }
 }
 
-@media (max-width: 576px) {
-  .products-list .grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
+.product-card {
+  position: relative; /* necesario para posicionar el badge */
+}
 
-  .product-card img {
-    height: 150px;
-  }
-
-  .pagination {
-    font-size: 14px;
-    gap: 3px;
-    padding: 5px;
-  }
-
-  .pagination button {
-    padding: 6px 8px;
-    font-size: 13px;
-  }
+.discount-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #d32f2f;
+  color: white;
+  font-weight: bold;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  z-index: 2;
 }

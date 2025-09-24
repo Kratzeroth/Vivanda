@@ -1,0 +1,157 @@
+/* Hero profesional */
+.about-hero {
+  width: 100%;
+  background: linear-gradient(135deg, #d9f2e6 0%, #ffffff 100%);
+  padding: 5rem 2rem;
+  overflow: hidden;
+}
+
+.hero-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.hero-text {
+  flex: 1 1 500px;
+  text-align: left;
+}
+
+.hero-text h1 {
+  font-size: 3rem;
+  color: #359139;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.hero-text p {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: #3e3e3e;
+  margin-bottom: 1.5rem;
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.hero-btn {
+  display: inline-block;
+  background-color: #3daf42;
+  color: #fff;
+  padding: 0.8rem 1.8rem;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.hero-btn:hover {
+  background-color: #1e5c44;
+  color: #007BFF; /* texto azul al pasar */
+  transform: translateY(-2px);
+}
+
+.hero-image {
+  flex: 1 1 400px;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-image img {
+  width: 100%;
+  max-width: 400px;
+  object-fit: contain;
+}
+
+/* Sección Quiénes somos */
+.about-section {
+  max-width: 1000px;
+  margin: 4rem auto;
+  padding: 0 1rem;
+}
+
+.about-text h2 {
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+  color: #2a7f5f;
+  text-align: left;
+}
+
+.about-text p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #555;
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+/* Misión, visión y valores */
+.about-cards {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 3rem auto 6rem;
+  flex-wrap: wrap;
+}
+
+.about-cards .card {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  flex: 1 1 50%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-cards .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+}
+
+.about-cards .card h3 {
+  color: #2a7f5f;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  text-align: left;
+}
+
+.about-cards .card p {
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+/* Responsivo */
+@media (max-width: 1024px) {
+  .hero-content {
+    flex-direction: column-reverse;
+    text-align: center;
+  }
+
+  .hero-text h1 {
+    font-size: 2.2rem;
+  }
+
+  .hero-text p {
+    font-size: 1rem;
+  }
+
+  .hero-image img {
+    max-width: 300px;
+  }
+
+  .about-cards {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .about-text h2 {
+    text-align: center;
+  }
+}

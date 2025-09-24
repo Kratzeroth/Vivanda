@@ -3,116 +3,180 @@ import { Header } from "./header";
 import { Footer } from "./footer";
 import { FiltersSidebar } from "./FiltersSideBar";
 import "../src/assets/CSS/products.css";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const ProductsPage = () => {
-    const [filters, setFilters] = useState({
-        minPrice: "", maxPrice: "", category: "TODO", brand: "", minRating: "", discount: ""
-    });
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [columns, setColumns] = useState(4);
-    const [currentPage, setCurrentPage] = useState(1);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const updateColumns = () => {
-            if (window.innerWidth >= 1200) setColumns(4);
-            else if (window.innerWidth >= 992) setColumns(3);
-            else if (window.innerWidth >= 768) setColumns(2);
-            else setColumns(1);
-        };
-        updateColumns();
-        window.addEventListener("resize", updateColumns);
-        return () => window.removeEventListener("resize", updateColumns);
-    }, []);
+  const [filters, setFilters] = useState({
+    minPrice: "",
+    maxPrice: "",
+    category: "TODO",
+    minRating: 0,
+    discount: ""
+  });
 
-    const handleFilterChange = (e) => {
-        setFilters({ ...filters, [e.target.name]: e.target.value });
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [columns, setColumns] = useState(4);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsData, setProductsData] = useState([]);
+  const [categories, setCategories] = useState(["TODO"]);
+  const PRODUCTS_PER_PAGE = 12;
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const categoryQuery = params.get("category");
+    if (categoryQuery) setFilters((prev) => ({ ...prev, category: categoryQuery }));
+  }, [location.search]);
+
+  useEffect(() => {
+    const updateColumns = () => {
+      if (window.innerWidth >= 1200) setColumns(4);
+      else if (window.innerWidth >= 992) setColumns(3);
+      else if (window.innerWidth >= 768) setColumns(2);
+      else setColumns(1);
     };
+    updateColumns();
+    window.addEventListener("resize", updateColumns);
+    return () => window.removeEventListener("resize", updateColumns);
+  }, []);
 
-    const filteredProducts = productsData.filter(p => (
-        (!filters.minPrice || p.price >= parseFloat(filters.minPrice)) &&
-        (!filters.maxPrice || p.price <= parseFloat(filters.maxPrice)) &&
-        (filters.category === "TODO" || p.category === filters.category) &&
-        (!filters.brand || p.brand === filters.brand) &&
-        (!filters.minRating || p.rating >= parseFloat(filters.minRating)) &&
-        (!filters.discount || (filters.discount === "true" ? p.discount : !p.discount))
-    ));
+  const handleFilterChange = (e) => {
+    setFilters({ ...filters, [e.target.name]: e.target.value });
+    setCurrentPage(1);
+  };
 
-    const totalPages = 5; // solo visual
-    const handlePageClick = (page) => setCurrentPage(page);
+  useEffect(() => {
+    fetch("http://localhost/Vivanda/Vivanda/backend/prod_all.php")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          const promoMap = {};
+          data.promotions.forEach((p) => {
+            promoMap[p.id_producto] = p.descuento_porcentaje;
+          });
 
-    return (
-        <div className="products-page">
-            <Header />
-            <div className="container-fluid">
-                <button className="filters-toggle-btn" onClick={() => setSidebarOpen(true)}>Mostrar Filtros</button>
+          const mapped = data.products.map((p) => {
+            const discountPercent = promoMap[p.id_producto] || 0;
+            const hasDiscount = discountPercent > 0;
+            const discountedPrice = hasDiscount
+              ? parseFloat(p.precio) * (1 - discountPercent / 100)
+              : parseFloat(p.precio);
 
-                <div className="products-main">
-                    <FiltersSidebar
-                        filters={filters}
-                        onChange={handleFilterChange}
-                        onClose={() => setSidebarOpen(false)}
-                        open={sidebarOpen}
-                    />
+            return {
+              id: p.id_producto,
+              name: p.nombre_producto,
+              price: discountedPrice,
+              rating: p.calificacion ? parseInt(p.calificacion) : 0,
+              category: p.categoria_nombre,
+              discount: hasDiscount,
+              discountPercent: discountPercent,
+              image: p.imagen_url ? `/${p.imagen_url}` : "images/productos/default.png"
+            };
+          });
 
-                    <section className="products-list">
-                        {/* Paginación arriba derecha */}
-                        <div className="pagination pagination-top">
-                            {[...Array(totalPages)].map((_, i) => (
-                                <button
-                                    key={i}
-                                    className={currentPage === i + 1 ? "active" : ""}
-                                    onClick={() => handlePageClick(i + 1)}
-                                >
-                                    {i + 1}
-                                </button>
-                            ))}
-                        </div>
+          setProductsData(mapped);
+          setCategories(["TODO", ...new Set(mapped.map((p) => p.category))]);
+        }
+      })
+      .catch((err) => console.error("Error cargando productos:", err));
+  }, []);
 
-                        <div className="grid" style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
-                            {filteredProducts.map(p => (
-                                <div key={p.id} className="product-card">
-                                    <img src={p.image} alt={p.name} />
-                                    <h5>{p.name}</h5>
-                                    <p>Precio: S/ {p.price.toFixed(2)}</p>
-                                    <p>Calificación: {p.rating} ⭐</p>
-                                    <button className="btn">Comprar</button>
-                                </div>
-                            ))}
-                        </div>
+  const filteredProducts = productsData.filter((p) => {
+    const matchPrice =
+      (!filters.minPrice || p.price >= parseFloat(filters.minPrice)) &&
+      (!filters.maxPrice || p.price <= parseFloat(filters.maxPrice));
+    const matchCategory =
+      filters.category === "TODO" || p.category === filters.category;
+    const matchRating = !filters.minRating || p.rating >= parseInt(filters.minRating);
 
-                        {/* Paginación abajo centrada */}
-                        <div className="pagination pagination-bottom">
-                            {[...Array(totalPages)].map((_, i) => (
-                                <button
-                                    key={i}
-                                    className={currentPage === i + 1 ? "active" : ""}
-                                    onClick={() => handlePageClick(i + 1)}
-                                >
-                                    {i + 1}
-                                </button>
-                            ))}
-                        </div>
-                    </section>
+    let matchDiscount = true;
+    if (filters.discount === "true") matchDiscount = p.discount === true;
+    else if (filters.discount === "false") matchDiscount = p.discount === false;
+
+    return matchPrice && matchCategory && matchRating && matchDiscount;
+  });
+
+  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * PRODUCTS_PER_PAGE,
+    currentPage * PRODUCTS_PER_PAGE
+  );
+
+  const handlePageClick = (page) => setCurrentPage(page);
+  const handleAddClick = (id) => navigate(`/product/${id}`);
+
+  return (
+    <div className="products-page">
+      <Header />
+      <div className="container-fluid">
+        <button
+          className="filters-toggle-btn"
+          onClick={() => setSidebarOpen(true)}
+        >
+          Mostrar Filtros
+        </button>
+
+        <div className="products-main">
+          <FiltersSidebar
+            filters={filters}
+            categories={categories}
+            onChange={handleFilterChange}
+            onClose={() => setSidebarOpen(false)}
+            open={sidebarOpen}
+          />
+
+          <section className="products-list">
+            <div
+              className="grid"
+              style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
+            >
+              {paginatedProducts.map((p) => (
+                <div key={p.id} className="product-card">
+                  {p.discount && (
+                    <div className="discount-badge">-{Math.round(p.discountPercent)}%</div>
+                  )}
+                  <img src={p.image} alt={p.name} />
+                  <h5 className="product-name">{p.name}</h5>
+
+                  <div className="price-container">
+                    <div className="price-row">
+                      <span>Precio</span>
+                      <span>S/ {p.price.toFixed(2)}</span>
+                    </div>
+                  </div>
+
+                  <button className="btn-add" onClick={() => handleAddClick(p.id)}>
+                    AGREGAR
+                  </button>
                 </div>
+              ))}
+
+              {paginatedProducts.length === 0 && (
+                <p className="no-products">No se encontraron productos.</p>
+              )}
             </div>
-            {sidebarOpen && <div className="overlay show" onClick={() => setSidebarOpen(false)}></div>}
-            <Footer />
+
+            <div className="pagination pagination-bottom">
+              {[...Array(totalPages)].map((_, i) => (
+                <button
+                  key={i}
+                  className={currentPage === i + 1 ? "active" : ""}
+                  onClick={() => handlePageClick(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
+          </section>
         </div>
-    );
+      </div>
+
+      {sidebarOpen && (
+        <div className="overlay show" onClick={() => setSidebarOpen(false)}></div>
+      )}
+      <Footer />
+    </div>
+  );
 };
-
-// ====== CATEGORÍAS DINÁMICAS ======
-export const categories = ["TODO", "Frutas", "Lácteos", "Panadería", "Bebidas", "Cereales", "Snacks"];
-
-// Simulación de datos
-const productsData = [
-  { id: 1, name: "Fruta 1", price: 5, rating: 4.5, category: "Frutas", brand: "FreshFarm", discount: true, image: "../src/assets/categorias/frutas.png" },
-  { id: 2, name: "Leche 1", price: 8, rating: 4.0, category: "Lácteos", brand: "LaVaquita", discount: false, image: "../src/assets/categorias/frutas.png" },
-  { id: 3, name: "Pan 1", price: 4, rating: 4.2, category: "Panadería", brand: "PanDulce", discount: true, image: "../src/assets/categorias/frutas.png" },
-  { id: 4, name: "Queso 1", price: 10, rating: 4.7, category: "Lácteos", brand: "CheeseCo", discount: true, image: "../src/assets/categorias/frutas.png" },
-  { id: 5, name: "Jugo 1", price: 6, rating: 4.3, category: "Bebidas", brand: "JuiceCo", discount: false, image: "../src/assets/categorias/frutas.png" },
-  { id: 6, name: "Cereal 1", price: 7, rating: 4.6, category: "Cereales", brand: "CerealCo", discount: false, image: "../src/assets/categorias/frutas.png" },
-  { id: 7, name: "Snack 1", price: 3, rating: 3.9, category: "Snacks", brand: "SnackCo", discount: true, image: "../src/assets/categorias/frutas.png" },
-  { id: 8, name: "Fruta 2", price: 9, rating: 4.1, category: "Frutas", brand: "FreshFarm", discount: false, image: "../src/assets/categorias/frutas.png" },
-  { id: 10, name: "Snack 2", price: 11, rating: 4.0, category: "Snacks", brand: "SnackCo", discount: false, image: "../src/assets/categorias/frutas.png" }
-];

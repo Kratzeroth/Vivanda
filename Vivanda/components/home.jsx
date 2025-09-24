@@ -4,85 +4,116 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../src/assets/CSS/home.css";
 import { useRef, useState, useEffect } from "react";
 import { Footer } from "./footer";
-
-const categories = [
-  { id: 1, name: "Frutas", img: "../src/assets/categorias/frutas.png" },
-  { id: 2, name: "Verduras", img: "../src/assets/categorias/verduras.png" },
-  { id: 3, name: "Lácteos", img: "../src/assets/categorias/lacteos.png" },
-  { id: 4, name: "Bebidas", img: "../src/assets/categorias/bebidas.png" },
-  { id: 5, name: "Snacks", img: "../src/assets/categorias/snacks.png" },
-  { id: 6, name: "Higiene", img: "../src/assets/categorias/higiene.png" },
-];
-
-const featuredProducts = [
-  { id: 1, name: "Manzana", price: "S/ 5.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 2, name: "Leche", price: "S/ 6.50", img: "../src/assets/categorias/higiene.png" },
-  { id: 3, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 4, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 5, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 6, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 7, name: "333", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 8, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 9, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 10, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 11, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 12, name: "Pan", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-  { id: 13, name: "123", price: "S/ 3.00", img: "../src/assets/categorias/higiene.png" },
-];
+import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
+  const navigate = useNavigate();
   const containerRef = useRef(null);
   const [scrollX, setScrollX] = useState(0);
   const [maxScrollX, setMaxScrollX] = useState(0);
 
-  const step = 180; // tamaño del desplazamiento en px
+  const [categories, setCategories] = useState([]);
+  const [featured, setFeatured] = useState([]);
+  const step = 180;
 
+  // calcular scroll
   useEffect(() => {
     const container = containerRef.current;
-
     const updateMaxScroll = () => {
       if (container) {
         const max = container.scrollWidth - container.clientWidth;
         setMaxScrollX(max > 0 ? max : 0);
       }
     };
-
     updateMaxScroll();
-
     const resizeObserver = new ResizeObserver(updateMaxScroll);
     if (container) resizeObserver.observe(container);
-
     window.addEventListener("resize", updateMaxScroll);
-
     return () => {
       resizeObserver.disconnect();
       window.removeEventListener("resize", updateMaxScroll);
     };
   }, []);
 
-  const nextSlide = () => {
-    setScrollX((prev) => {
-      const next = prev + step;
-      return next > maxScrollX ? 0 : next; // reinicia si llegó al final
-    });
-  };
+  // cargar categorías
+  useEffect(() => {
+    fetch("http://localhost/Vivanda/Vivanda/backend/cats.php")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          const mapped = data.data.map((c) => ({
+            id: c.id_categoria,
+            name: c.nombre_categoria,
+            img: c.imagen_url
+              ? `/${c.imagen_url}`
+              : "images/categorias/default.png",
+          }));
+          setCategories(mapped);
+        }
+      })
+      .catch((err) => console.error("Error cargando categorías:", err));
+  }, []);
 
-  const prevSlide = () => {
-    setScrollX((prev) => {
-      const prevPos = prev - step;
-      return prevPos < 0 ? maxScrollX : prevPos; // va al final si retrocede más allá del inicio
-    });
-  };
+  // cargar productos destacados usando prod_all con descuentos
+  useEffect(() => {
+    fetch("http://localhost/Vivanda/Vivanda/backend/prod_all.php")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          // Creamos un map id_producto => descuento
+          const promoMap = {};
+          data.promotions.forEach((p) => {
+            promoMap[p.id_producto] = p.descuento_porcentaje;
+          });
+
+          const destacados = data.products.filter(
+            (p) => p.destacado === "1" || p.destacado === 1
+          );
+
+          const mapped = destacados.map((p) => {
+            const discountPercent = promoMap[p.id_producto] || 0;
+            const hasDiscount = discountPercent > 0;
+            const discountedPrice = hasDiscount
+              ? parseFloat(p.precio) * (1 - discountPercent / 100)
+              : parseFloat(p.precio);
+
+            return {
+              id: p.id_producto,
+              name: p.nombre_producto,
+              price: discountedPrice,
+              oldPrice: hasDiscount ? parseFloat(p.precio) : null,
+              discount: hasDiscount,
+              discountPercent: discountPercent,
+              img: p.imagen_url
+                ? `/${p.imagen_url}`
+                : "images/productos/default.png",
+            };
+          });
+
+          setFeatured(mapped);
+        }
+      })
+      .catch((err) => console.error("Error cargando productos:", err));
+  }, []);
+
+  const nextSlide = () =>
+    setScrollX((prev) => (prev + step > maxScrollX ? 0 : prev + step));
+  const prevSlide = () =>
+    setScrollX((prev) => (prev - step < 0 ? maxScrollX : prev - step));
 
   return (
     <div className="home-container">
       <Header />
+
       <section className="hero-section">
         <div className="hero-card">
           <div className="hero-text">
             <h1>Frescura y calidad directo a tu mesa</h1>
             <p>Compra online en Vivanda y recibe tus productos en minutos.</p>
-            <button className="btn btn-primary btn-lg hero-btn">
+            <button
+              className="hero-btn btn-lg"
+              onClick={() => navigate("/products")}
+            >
               Ver productos
             </button>
           </div>
@@ -96,7 +127,13 @@ export const Home = () => {
         <h2 className="section-title">Categorías Destacadas</h2>
         <div className="categories-container">
           {categories.map((cat) => (
-            <div key={cat.id} className="category-card">
+            <div
+              key={cat.id}
+              className="category-card"
+              onClick={() =>
+                navigate(`/products?category=${encodeURIComponent(cat.name)}`)
+              }
+            >
               <img src={cat.img} alt={cat.name} />
               <h3>{cat.name}</h3>
             </div>
@@ -105,8 +142,11 @@ export const Home = () => {
       </section>
 
       <section className="products-section">
-        <h2 className="products-title">Productos Destacados Semanal</h2>
-        <button onClick={prevSlide} className="btn btn-light btn-next btn-carrusel">
+        <h2 className="products-title">Productos Destacados de la Semana</h2>
+        <button
+          onClick={prevSlide}
+          className="btn btn-light btn-next btn-carrusel"
+        >
           <i className="bi bi-arrow-left"></i>
         </button>
         <div
@@ -117,18 +157,34 @@ export const Home = () => {
             transition: "transform 0.4s ease",
           }}
         >
-          {featuredProducts.map((product) => (
+          {featured.map((product) => (
             <div key={product.id} className="product-card">
+              {product.discount && (
+                <div className="discount-badge">
+                  -{parseInt(product.discountPercent)}%
+                </div>
+              )}
               <img src={product.img} alt={product.name} />
               <div className="product-info">
                 <span className="product-name">{product.name}</span>
-                <span className="product-price">{product.price}</span>
-                <button className="product-btn">Comprar</button>
+                <div className="product-prices">
+                  <span className="price-label">Precio</span>
+                  <span className="price-value">S/ {product.price.toFixed(2)}</span>
+                </div>
+                <button
+                  className="product-btn"
+                  onClick={() => navigate(`/product/${product.id}`)}
+                >
+                  Ver Detalles
+                </button>
               </div>
             </div>
           ))}
         </div>
-        <button onClick={nextSlide} className="btn btn-light btn-previous btn-carrusel">
+        <button
+          onClick={nextSlide}
+          className="btn btn-light btn-previous btn-carrusel"
+        >
           <i className="bi bi-arrow-right"></i>
         </button>
       </section>
@@ -136,7 +192,4 @@ export const Home = () => {
       <Footer />
     </div>
   );
-
-}
-
-
+};

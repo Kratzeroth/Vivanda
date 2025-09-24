@@ -1,150 +1,162 @@
-/* src/assets/CSS/cart.css */
+/* ======== CART PAGE ======== */
 .cart-container {
-  padding: 20px;
-  max-width: 1200px;
-  margin: auto;
+  padding: 40px 5%; /* padding lateral flexible */
+  margin: 0 auto;
+  width: 100%;
 }
 
 h1 {
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-  font-weight: bold;
+  font-size: 2.2rem;
+  margin-bottom: 25px;
+  font-weight: 700;
+  color: #2e7d32;
+  text-align: left;
 }
 
 .empty-cart {
   text-align: center;
   font-size: 1.2rem;
-  color: #777;
+  color: #666;
+  margin-top: 50px;
 }
 
 /* Layout principal */
 .cart-content {
   display: flex;
-  gap: 20px;
+  align-items: flex-start;
+  gap: 40px;
+  border-top: 2px solid #c8e6c9;
+  padding-top: 30px;
 }
 
-/* Lista de productos */
+/* Productos */
 .cart-items {
-  flex: 2;
+  flex: 2.5; /* más espacio para productos */
 }
 
 .cart-item {
   display: flex;
   align-items: flex-start;
-  border: 1px solid #eee;
-  border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 22px;
   background: #fff;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
   position: relative;
+  transition: transform 0.2s ease;
+}
+
+.cart-item:hover {
+  transform: translateY(-3px);
 }
 
 .cart-item img {
   width: 120px;
   height: 120px;
   object-fit: cover;
-  border-radius: 8px;
-  margin-right: 15px;
+  border-radius: 10px;
+  margin-right: 20px;
 }
 
 .cart-info {
   flex: 1;
+  text-align: left;
 }
 
 .cart-info h3 {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-.cart-info .store {
-  font-size: 0.9rem;
-  color: #888;
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
 }
 
 .price {
   font-weight: bold;
-  color: #e63946;
+  color: #2e7d32;
   margin: 5px 0;
-}
-
-.quantity-controls {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.quantity-controls button {
-  background: #f0f0f0;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
   font-size: 1rem;
-  border-radius: 5px;
-}
-
-.quantity-controls span {
-  font-size: 1rem;
-  font-weight: bold;
 }
 
 .subtotal {
-  margin-top: 5px;
-  font-size: 0.95rem;
+  margin-top: 8px;
+  font-size: 1rem;
   font-weight: 500;
+  color: #444;
 }
 
 .remove-btn {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 12px;
+  right: 12px;
   background: transparent;
   border: none;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   cursor: pointer;
-  color: #999;
+  color: #bbb;
+  transition: color 0.2s;
 }
 
 .remove-btn:hover {
-  color: red;
+  color: #d32f2f;
 }
 
 /* Resumen */
 .cart-summary {
   flex: 1;
-  border: 1px solid #eee;
-  border-radius: 10px;
-  padding: 20px;
-  background: #fff;
-  height: fit-content;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border: 1px solid #c8e6c9;
+  border-radius: 12px;
+  padding: 25px;
+  background: #f9fff9;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 100px;
+  min-width: 280px;
 }
 
 .cart-summary h2 {
   margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2e7d32;
+  border-bottom: 2px solid #81c784;
+  padding-bottom: 8px;
+}
+
+.cart-summary p {
+  margin: 10px 0;
+  font-size: 1rem;
+  color: #444;
 }
 
 .checkout-btn {
-  margin-top: 15px;
+  margin-top: 20px;
   width: 100%;
-  padding: 12px;
-  background: #ff5722;
+  padding: 14px;
+  background: #4caf50;
   color: #fff;
   border: none;
-  font-size: 1rem;
-  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.25s;
 }
 
 .checkout-btn:hover {
-  background: #e64a19;
+  background: #2e7d32;
 }
 
 /* Responsive */
 @media (max-width: 900px) {
   .cart-content {
     flex-direction: column;
+  }
+
+  .cart-summary {
+    position: static;
+    margin-top: 20px;
   }
 
   .cart-item {
@@ -154,11 +166,10 @@ h1 {
   }
 
   .cart-item img {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 
-  .remove-btn {
-    top: 5px;
-    right: 5px;
+  .cart-info {
+    text-align: center;
   }
 }

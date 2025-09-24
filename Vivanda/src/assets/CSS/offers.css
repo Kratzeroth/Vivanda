@@ -1,43 +1,59 @@
-/* src/assets/CSS/offers.css */
-.offers-hero {
-  text-align: center;
-  background: linear-gradient(135deg, #ff4d4d, #ff9966);
-  padding: 80px 20px;
-  color: white;
-  margin-bottom: 40px;
+/* Carrusel */
+.offers-carousel {
+  width: 100vw;
+  margin: 0;
+  overflow: hidden;
 }
 
-.offers-hero h1 {
-  font-size: 3.2rem;
-  margin-bottom: 15px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+.carousel-inner {
+  width: 100vw;
 }
 
-.offers-hero p {
-  font-size: 1.3rem;
+.carousel-main-img {
+  width: 100vw;
+  height: 600px;
+  object-fit: cover;
+  display: block;
 }
 
-.offers-section {
-  padding: 40px 20px;
+/* Productos por categoría */
+.offers-category {
+  margin: 2rem;
 }
 
-.offers-section h2 {
-  font-size: 2rem;
-  margin-bottom: 25px;
+.offers-category h2 {
+  margin-bottom: 1rem;
   color: #333;
+  font-size: 1.8rem;
 }
 
+/* Cuadrícula de productos */
 .offers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* columnas más anchas */
+  gap: 1rem;
 }
 
-/* Contenedor de imagen para evitar desbordes */
+.offer-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  padding: 0.7rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.offer-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
 .img-container {
   width: 100%;
-  height: 220px;
+  height: 160px; /* imagen más grande */
   overflow: hidden;
+  border-radius: 8px;
 }
 
 .img-container img {
@@ -46,122 +62,55 @@
   object-fit: cover;
 }
 
-.offer-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.offer-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.18);
-}
-
-.offer-info {
-  padding: 20px;
-  text-align: center;
-}
-
 .offer-info h3 {
-  font-size: 1.3rem;
-  margin-bottom: 8px;
+  margin: 0.5rem 0 0 0;
+  color: #ff5858;
+  font-size: 1.05rem;
 }
 
 .offer-info p {
-  font-size: 1rem;
+  font-size: 0.85rem;
   color: #555;
-  margin-bottom: 10px;
+  height: 45px;
+  overflow: hidden;
 }
 
-.discount {
-  display: block;
-  color: #ff4d4d;
+.offer-info .discount {
+  background: #ff5858;
+  color: #fff;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-right: 0.3rem;
+  font-size: 0.85rem;
 }
 
-.price {
-  display: block;
-  font-size: 1.3rem;
+.offer-info .price {
   font-weight: bold;
-  margin-bottom: 15px;
+  color: #333;
+  font-size: 1rem;
 }
 
 .offer-info button {
-  padding: 12px 18px;
+  margin-top: 0.5rem;
+  padding: 0.4rem 1rem;
+  background: #f09819;
   border: none;
-  background: #ff4d4d;
-  color: white;
-  font-weight: bold;
-  border-radius: 8px;
+  color: #fff;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.3s ease;
+  font-size: 0.85rem;
 }
 
-.offer-info button:hover {
-  background: #cc0000;
-  transform: scale(1.05);
-}
+/* Responsivo */
+@media (max-width: 768px) {
+  .offers-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.8rem;
+  }
 
-.extra-offers {
-  padding: 60px 20px;
-  text-align: center;
-  background: #f8f8f8;
-}
-
-.extra-offers h2 {
-  font-size: 2rem;
-  margin-bottom: 30px;
-}
-
-.limited-offers {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 25px;
-  justify-content: center;
-}
-
-.limited-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 25px;
-  flex: 1;
-  min-width: 250px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.limited-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-}
-
-.limited-card h3 {
-  color: #ff4d4d;
-  margin-bottom: 10px;
-}
-
-.limited-card p {
-  color: #555;
-}
-
-.offers-banner {
-  width: 100%;
-  margin: 40px 0;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-  transition: transform 0.3s ease;
-}
-
-.offers-banner img {
-  width: 100%;
-  display: block;
-  object-fit: cover;
-}
-
-.offers-banner:hover {
-  transform: scale(1.02);
+  .img-container {
+    height: 120px;
+  }
 }
