@@ -1,0 +1,394 @@
+/* ======== NAVBAR ======== */
+.header-Container {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-Nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 25px;
+  gap: 20px;
+}
+
+/* Logo */
+.header-Logo img {
+  height: 55px;
+  cursor: pointer;
+}
+
+/* Menú principal */
+.header-Menu {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: 120px; /* 🔹 menú más a la derecha */
+}
+
+.header-Menu li {
+  position: relative;
+}
+
+.header-Menu a {
+  text-decoration: none;
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  padding: 8px 0;
+  display: inline-block;
+}
+
+.header-Menu a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background-color: #3daf42;
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+.header-Menu a:hover {
+  color: #3daf42;
+}
+
+.header-Menu a:hover::after {
+  width: 100%;
+}
+
+/* Buscador */
+.header-Center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* pegado al menú */
+}
+
+.header-SearchInput {
+  width: 100%;
+  max-width: 800px;
+  padding: 7px 12px;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header-SearchInput::placeholder {
+  color: #999;
+  font-size: 0.9rem;
+}
+
+/* Iconos derecha */
+.header-Right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+/* Caja de icono con texto */
+.icon-Box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.Icon {
+  font-size: 1.5rem;
+  color: #000;
+  transition: color 0.2s ease;
+}
+
+.Icon:hover {
+  color: #444;
+}
+
+.icon-Label {
+  font-size: 0.8rem;
+  color: #000;
+  margin-top: 2px;
+}
+
+/* Botón login con fondo verde */
+.header-Button {
+  background-color: #3daf42; /* verde corporativo */
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+}
+
+.header-Button a {
+  text-decoration: none;
+  color: #fff; /* texto blanco */
+}
+
+/* Hover */
+.header-Button:hover {
+  background-color: #31a537; /* verde más oscuro al pasar */
+}
+
+
+/* Dropdown usuario */
+.user-Dropdown {
+  position: relative;
+}
+
+.dropdown-Menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  z-index: 9999;
+  padding: 8px 0;
+}
+
+.dropdown-Menu a,
+.dropdown-Menu button {
+  padding: 10px 15px;
+  font-size: 0.9rem;
+  color: #333;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dropdown-Menu a:hover,
+.dropdown-Menu button:hover {
+  background: #f5f5f5;
+  color: #2e7d32;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .header-Nav {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .header-Center {
+    width: 100%;
+    order: 3;
+    justify-content: center;
+  }
+
+  .header-SearchInput {
+    max-width: 100%;
+  }
+
+  .header-Right {
+    order: 2;
+    gap: 15px;
+  }
+
+  .header-Logo {
+    order: 1;
+  }
+
+  .header-Menu {
+    display: none;
+  }
+}
+
+
+/* ===== Overlay oscuro ===== */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+  z-index: 9998;
+}
+
+/* ===== Drawer lateral carrito ===== */
+.cart-Sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 350px;
+  height: 100%;
+  background: #fff;
+  box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.25);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-Sidebar.open {
+  transform: translateX(0);
+}
+
+.cart-Header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.cart-Header h2 {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.close-Btn {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.cart-Content {
+  padding: 15px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Subtítulo */
+.cart-subtitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Items */
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+  position: relative;
+}
+
+.cart-item img {
+  width: 55px;
+  height: 55px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.cart-info h4 {
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.cart-info .price {
+  font-weight: bold;
+  color: #d32f2f; /* rojo precio */
+  font-size: 0.9rem;
+}
+
+.cart-info .qty {
+  font-size: 0.8rem;
+  color: #555;
+}
+
+/* Botón eliminar */
+.delete-item {
+  background: transparent;
+  border: none;
+  color: #444;
+  font-size: 1.2rem;
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.delete-item:hover {
+  color: #d32f2f;
+}
+
+/* Resumen */
+.cart-summary {
+  padding: 15px;
+  border-top: 1px solid #ddd;
+  background: #fafafa;
+}
+
+.cart-summary .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 8px 0;
+  font-size: 0.95rem;
+}
+
+.cart-summary .row .label {
+  flex: 1;
+  text-align: left;
+}
+
+.cart-summary .row .value {
+  flex: 0;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.cart-summary .row.total {
+  font-weight: bold;
+  font-size: 1.1rem;
+  border-top: 1px solid #ddd;
+  padding-top: 8px;
+}
+
+.cart-summary .free {
+  color: green;
+  font-weight: bold;
+}
+
+/* Botón amarillo */
+.checkout-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 12px;
+  background: #ffeb3b;
+  color: #000;
+  border: none;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+
+.checkout-btn:hover {
+  background: #fdd835;
+}

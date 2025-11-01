@@ -1,0 +1,137 @@
+/* --- Contenedor principal --- */
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+/* --- Video de fondo --- */
+.background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0; /* fondo */
+}
+
+/* --- Overlay oscuro encima del video --- */
+.register-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1;
+}
+
+/* --- Caja de registro --- */
+.register-box {
+  background: rgba(30, 30, 30, 0.65); /* 🔹 translúcido oscuro */
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 3rem 2.5rem;
+  border-radius: 16px;
+  width: 500px;
+  max-width: 95%;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  animation: fadeIn 0.8s ease-in-out;
+  will-change: opacity;
+}
+
+/* Animación entrada */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.register-title {
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* --- Formulario --- */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* --- Inputs --- */
+.register-input {
+  padding: 0.9rem 1.1rem;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.25s ease;
+}
+
+.register-input::placeholder {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.register-input:focus {
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 8px rgba(66, 153, 225, 0.7);
+}
+
+/* --- Botón de registrar --- */
+.register-btn {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: bold;
+  cursor: pointer;
+  background: linear-gradient(135deg, #3dc453, #229e3d);
+  color: white;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.register-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(24, 206, 100, 0.6);
+}
+
+/* --- Errores --- */
+.error {
+  color: #ff5a5a;
+  font-size: 0.85rem;
+  text-align: left;
+  margin-top: -0.6rem;
+}
+
+/* --- Mensajes del servidor --- */
+.server-message {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #f6e05e;
+}
+
+/* --- Link hacia login --- */
+.login-link {
+  color: #3dc453;
+  font-weight: bold;
+  text-decoration: none;
+  margin-top: 1.5rem;
+  display: inline-block;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}

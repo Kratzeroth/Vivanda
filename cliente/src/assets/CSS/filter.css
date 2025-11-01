@@ -1,0 +1,93 @@
+/* ===== SIDEBAR DE FILTROS ===== */
+.filters-sidebar {
+  background-color: #ffffff;
+  padding: 25px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  width: 100%;         /* <-- importante para que en responsive ocupe todo */
+  max-width: 300px;    /* ancho máximo fijo */
+  min-width: 250px;
+  height: 100%; 
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  overflow-y: auto;
+  transition: all 0.3s ease-in-out;
+}
+
+.filters-sidebar h4 {
+  margin-bottom: 20px;
+  color: #3a3a3a;
+  font-size: 18px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 5px;
+}
+
+/* ===== ITEMS DE FILTROS ===== */
+.filter-item {
+  margin-bottom: 18px;
+}
+
+.filter-item label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #555555;
+  font-size: 14px;
+}
+
+.filter-item input,
+.filter-item select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d0d0d0;
+  font-size: 14px;
+  color: #333333;
+  background-color: #fdfdfd;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.filter-item input:focus,
+.filter-item select:focus {
+  outline: none;
+  border-color: #5c9ded;
+  box-shadow: 0 0 5px rgba(92, 157, 237, 0.3);
+}
+
+/* ===== RANGO DE PRECIO ===== */
+.filter-range {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-range input {
+  flex: 1;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #d0d0d0;
+  font-size: 14px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+  .filters-sidebar {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .filter-item label {
+    font-size: 13px;
+  }
+
+  .filter-item input,
+  .filter-item select {
+    font-size: 12px;
+  }
+}
+

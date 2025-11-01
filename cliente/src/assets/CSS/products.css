@@ -1,0 +1,213 @@
+/* ===== CONTENEDOR PRINCIPAL ===== */
+.container-fluid {
+  margin: 20px 0;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+.products-page {
+  font-family: 'Arial', sans-serif;
+  background-color: #fafafa;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== BOTÓN MOSTRAR FILTROS (MÓVIL) ===== */
+.filters-toggle-btn {
+  display: none;
+  background: #66bb6a; /* verde claro */
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.filters-toggle-btn:hover {
+  background: #57a05a;
+}
+
+/* ===== LAYOUT PRINCIPAL ===== */
+.products-main {
+  display: flex;
+  flex: 1;
+  gap: 20px;
+  box-sizing: border-box;
+  align-items: stretch; /* 🔹 fuerza que los items estiren */
+}
+
+/* ===== LISTA DE PRODUCTOS ===== */
+.products-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.products-list .grid {
+  display: grid;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+/* ===== TARJETAS DE PRODUCTO ===== */
+.product-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: left; /* textos alineados a la izquierda */
+  border: 1px solid #e6e6e6;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start; /* textos alineados a la izquierda */
+}
+
+.product-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.product-card img {
+  max-width: 100%;
+  height: 160px;
+  object-fit: contain;
+  margin-bottom: 10px;
+  align-self: center; /* 🔹 imagen centrada horizontalmente */
+}
+
+.product-card .product-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  margin: 10px 0 15px 0; /* 🔹 un poco de espacio debajo de la imagen */
+  min-height: 40px;
+  text-align: left; /* 🔹 nombre alineado a la izquierda */
+  width: 100%;
+}
+/* ===== PRECIOS ===== */
+.price-container {
+  margin: 0 0 10px 0;
+  width: 100%;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between; /* izquierda/derecha */
+  width: 100%;
+  font-size: 15px;
+  font-weight: bold;
+  color: #388e3c;
+  margin-bottom: 4px;
+}
+
+.price-row.discount {
+  color: #d32f2f;
+  text-decoration: line-through;
+  font-weight: normal;
+}
+
+/* Botón verde claro */
+.product-card .btn-add {
+  margin-top: 10px;
+  padding: 10px 0;
+  width: 100%;
+  background: #66bb6a;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  align-self: stretch; /* 🔹 botón ocupa todo el ancho */
+}
+
+.product-card .btn-add:hover {
+  background: #57a05a;
+}
+
+/* ===== PAGINACIÓN ===== */
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.pagination button {
+  border: none;
+  padding: 8px 12px;
+  margin: 2px;
+  border-radius: 6px;
+  background: #eee;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+  font-weight: 600;
+}
+
+.pagination button:hover {
+  background: #ddd;
+}
+
+.pagination button.active {
+  background: #66bb6a;
+  color: #fff;
+}
+
+.pagination button:disabled {
+  background: #e0e0e0;
+  color: #888;
+  cursor: not-allowed;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1200px) {
+  .products-list .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .products-main {
+    flex-direction: column;
+  }
+
+  .products-list .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filters-toggle-btn {
+    display: block;
+  }
+}
+
+@media (max-width: 768px) {
+  .products-list .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.product-card {
+  position: relative; /* necesario para posicionar el badge */
+}
+
+.discount-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #d32f2f;
+  color: white;
+  font-weight: bold;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  z-index: 2;
+}
