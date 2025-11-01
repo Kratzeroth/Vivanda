@@ -1,0 +1,38 @@
+.banner-section {
+  margin-bottom: 40px;
+  background: #1a1a1a;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Primera fila: datos */
+.banner-top {
+  display: flex;
+  gap: 10px;
+  padding: 15px;
+  align-items: center;
+}
+
+.banner-top input[type="text"],
+.banner-top select,
+.banner-top input[type="file"] {
+  padding: 10px;
+  border-radius: 6px;
+  background: #2c2c2c;
+  color: white;
+  border: 1px solid #444;
+  flex: 1;
+}
+
+.banner-top select {
+  max-width: 150px;
+}
+
+/* Segunda fila: imagen */
+.banner-image img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  display: block;
+  border-top: 1px solid #333;
+}
