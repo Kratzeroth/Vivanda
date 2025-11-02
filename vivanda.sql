@@ -16,6 +16,33 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `banners`
+--
+
+DROP TABLE IF EXISTS `banners`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `banners` (
+  `id_banner` int(11) NOT NULL AUTO_INCREMENT,
+  `titulo` varchar(150) DEFAULT NULL,
+  `imagen_url` varchar(255) NOT NULL,
+  `activo` tinyint(1) DEFAULT 1,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_banner`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `banners`
+--
+
+LOCK TABLES `banners` WRITE;
+/*!40000 ALTER TABLE `banners` DISABLE KEYS */;
+INSERT INTO `banners` VALUES (1,'Descuento en toda la tienda','images/banners/offert1.png',1,'2025-11-02 18:30:26'),(2,'Descuentos en audífonos','images/banners/offert2.png',1,'2025-11-02 18:30:26'),(3,'50% off en smartphones y tablets','images/banners/offert3.png',1,'2025-11-02 18:30:26'),(7,'50% prueba','images/banners/6907ae4dc104c.jpg',0,'2025-11-02 19:13:23');
+/*!40000 ALTER TABLE `banners` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `carrito`
 --
 
@@ -84,7 +111,7 @@ CREATE TABLE `categorias` (
   `imagen_url` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id_categoria`),
   UNIQUE KEY `nombre_categoria` (`nombre_categoria`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -153,7 +180,7 @@ CREATE TABLE `clientes` (
 
 LOCK TABLES `clientes` WRITE;
 /*!40000 ALTER TABLE `clientes` DISABLE KEYS */;
-INSERT INTO `clientes` VALUES (1,'Andrea','Sanchez','924582277','andrea12@gmail.com','2025-09-12 02:39:27',3),(2,'Juan','Vazques','984215785','vazquesj@gmail.com','2025-09-12 02:46:04',NULL),(3,'Rafael','Dominguez','923974159','rafad@gmail.com','2025-09-12 02:47:00',4),(4,'Diego','Tataje','957842658','diegot1@gmail.com','2025-09-24 05:22:04',5),(5,'Elias','Urbano','906497249','ursam26@gmail.com','2025-09-25 19:20:57',6);
+INSERT INTO `clientes` VALUES (1,'Andrea','Sanchez','924582277','andrea12@gmail.com','2025-09-12 02:39:27',3),(3,'Rafael','Dominguez','923974159','rafad@gmail.com','2025-09-12 02:47:00',4),(4,'Diego','Tataje','957842658','diegot1@gmail.com','2025-09-24 05:22:04',5),(5,'Elias','Urbano','906497249','ursam26@gmail.com','2025-09-25 19:20:57',6);
 /*!40000 ALTER TABLE `clientes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -204,7 +231,7 @@ CREATE TABLE `credenciales` (
   UNIQUE KEY `username` (`username`),
   KEY `id_usuario` (`id_usuario`),
   CONSTRAINT `credenciales_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -263,7 +290,7 @@ CREATE TABLE `historial_registros` (
   PRIMARY KEY (`id_historial`),
   KEY `id_usuario` (`id_usuario`),
   CONSTRAINT `historial_registros_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=87 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=120 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -272,7 +299,7 @@ CREATE TABLE `historial_registros` (
 
 LOCK TABLES `historial_registros` WRITE;
 /*!40000 ALTER TABLE `historial_registros` DISABLE KEYS */;
-INSERT INTO `historial_registros` VALUES (1,2,'registro','Usuario registrado en el sistema','2025-09-12 02:03:53'),(2,2,'login','Inicio de sesión exitoso','2025-09-12 02:04:09'),(3,1,'login','Inicio de sesión exitoso','2025-09-12 02:04:25'),(4,1,'login','Inicio de sesión exitoso','2025-09-12 02:17:03'),(5,1,'login','Inicio de sesión exitoso','2025-09-12 02:17:54'),(6,2,'login','Inicio de sesión exitoso','2025-09-12 02:18:08'),(7,1,'login','Inicio de sesión exitoso','2025-09-12 02:18:56'),(8,1,'registro_cliente','El administrador registró al cliente con correo: andrea12@gmail.com','2025-09-12 02:39:27'),(9,3,'registro','Usuario registrado en el sistema','2025-09-12 02:41:33'),(10,1,'login','Inicio de sesión exitoso','2025-09-12 02:45:27'),(11,1,'registro_cliente','El administrador registró al cliente con correo: vazquesj@gmail.com','2025-09-12 02:46:04'),(12,4,'registro','Usuario registrado en el sistema','2025-09-12 02:47:00'),(13,1,'login','Inicio de sesión exitoso','2025-09-12 02:57:25'),(14,1,'registro_compra','El administrador registró una compra para el cliente 1 en canal tienda_fisica','2025-09-12 03:17:57'),(15,1,'login','Inicio de sesión exitoso','2025-09-19 02:11:49'),(16,2,'login','Inicio de sesión exitoso','2025-09-19 02:12:13'),(17,1,'login','Inicio de sesión exitoso','2025-09-19 02:18:21'),(18,2,'login','Inicio de sesión exitoso','2025-09-19 02:32:43'),(19,1,'login','Inicio de sesión exitoso','2025-09-22 22:09:30'),(20,2,'login','Inicio de sesión exitoso','2025-09-22 22:09:37'),(21,2,'login','Inicio de sesión exitoso','2025-09-22 22:39:09'),(22,3,'login_fallido','Credenciales inválidas','2025-09-22 22:39:46'),(23,3,'login_fallido','Credenciales inválidas','2025-09-22 22:39:48'),(24,3,'login_fallido','Credenciales inválidas','2025-09-22 22:39:51'),(25,3,'login_fallido','Credenciales inválidas','2025-09-22 22:40:09'),(26,3,'login_fallido','Credenciales inválidas','2025-09-22 22:40:12'),(27,3,'login_fallido','Credenciales inválidas','2025-09-22 22:40:14'),(28,3,'login_fallido','Credenciales inválidas','2025-09-22 22:40:17'),(29,2,'login','Inicio de sesión exitoso','2025-09-22 22:40:28'),(30,2,'login','Inicio de sesión exitoso','2025-09-23 17:53:06'),(31,2,'login','Inicio de sesión exitoso','2025-09-23 17:59:51'),(32,2,'login','Inicio de sesión exitoso','2025-09-23 20:01:05'),(33,2,'login','Inicio de sesión exitoso','2025-09-23 20:06:39'),(34,2,'login','Inicio de sesión exitoso','2025-09-23 20:10:47'),(35,2,'login','Inicio de sesión exitoso','2025-09-23 20:23:28'),(36,2,'login','Inicio de sesión exitoso','2025-09-23 20:29:04'),(37,2,'login','Inicio de sesión exitoso','2025-09-23 20:33:34'),(38,2,'login','Inicio de sesión exitoso','2025-09-23 21:22:48'),(39,2,'login','Inicio de sesión exitoso','2025-09-23 21:40:05'),(40,2,'login','Inicio de sesión exitoso','2025-09-24 00:18:42'),(41,5,'registro','Usuario registrado en el sistema','2025-09-24 05:22:04'),(42,5,'login','Inicio de sesión exitoso','2025-09-24 05:22:16'),(43,5,'login_fallido','Credenciales inválidas','2025-09-25 18:06:01'),(44,5,'login','Inicio de sesión exitoso','2025-09-25 18:06:11'),(45,5,'login','Inicio de sesión exitoso','2025-09-25 18:22:29'),(46,5,'login','Inicio de sesión exitoso','2025-09-25 18:36:05'),(47,6,'registro','Usuario registrado en el sistema','2025-09-25 19:20:57'),(48,5,'login','Inicio de sesión exitoso','2025-09-25 19:37:42'),(49,5,'login','Inicio de sesión exitoso','2025-09-25 19:39:33'),(50,5,'login','Inicio de sesión exitoso','2025-09-25 19:45:01'),(51,5,'login','Inicio de sesión exitoso','2025-09-25 19:45:50'),(52,5,'login','Inicio de sesión exitoso','2025-09-25 20:12:36'),(53,5,'login','Inicio de sesión exitoso','2025-09-25 20:13:11'),(54,5,'login','Inicio de sesión exitoso','2025-09-25 22:57:14'),(55,5,'login','Inicio de sesión exitoso','2025-09-25 22:58:34'),(56,5,'login','Inicio de sesión exitoso','2025-09-25 23:19:53'),(57,1,'login_fallido','Credenciales inválidas','2025-09-25 23:20:49'),(58,1,'login','Inicio de sesión exitoso','2025-09-25 23:20:53'),(59,5,'login','Inicio de sesión exitoso','2025-09-26 00:24:20'),(60,5,'login','Inicio de sesión exitoso','2025-09-26 00:25:45'),(61,5,'login','Inicio de sesión exitoso','2025-10-01 18:24:17'),(62,5,'login','Inicio de sesión exitoso','2025-10-01 18:28:41'),(63,NULL,'login_fallido','Credenciales inválidas','2025-10-16 21:01:14'),(64,NULL,'login_fallido','Credenciales inválidas','2025-10-16 21:01:16'),(65,NULL,'login_fallido','Credenciales inválidas','2025-10-16 21:01:18'),(66,NULL,'login_fallido','Credenciales inválidas','2025-10-16 21:01:27'),(67,6,'login_fallido','Credenciales inválidas','2025-10-16 21:03:08'),(68,6,'login_fallido','Credenciales inválidas','2025-10-16 21:03:12'),(69,6,'login','Inicio de sesión exitoso','2025-10-16 21:03:15'),(70,5,'login','Inicio de sesión exitoso','2025-10-21 23:37:53'),(71,5,'login','Inicio de sesión exitoso','2025-10-21 23:47:38'),(72,5,'login','Inicio de sesión exitoso','2025-10-21 23:54:22'),(73,5,'login','Inicio de sesión exitoso','2025-10-21 23:54:40'),(74,5,'login','Inicio de sesión exitoso','2025-10-21 23:55:39'),(75,5,'login','Inicio de sesión exitoso','2025-10-21 23:56:18'),(76,5,'login','Inicio de sesión exitoso','2025-10-21 23:59:25'),(77,5,'login','Inicio de sesión exitoso','2025-10-22 00:01:08'),(78,6,'login','Inicio de sesión exitoso','2025-10-22 00:03:22'),(79,5,'login','Inicio de sesión exitoso','2025-10-22 01:40:33'),(80,6,'login','Inicio de sesión exitoso','2025-10-23 01:32:32'),(81,5,'login','Inicio de sesión exitoso','2025-10-23 21:15:39'),(82,6,'login','Inicio de sesión exitoso','2025-10-23 21:33:24'),(83,5,'login','Inicio de sesión exitoso','2025-11-01 21:03:20'),(84,6,'login','Inicio de sesión exitoso','2025-11-01 21:18:02'),(85,6,'login','Inicio de sesión exitoso','2025-11-01 21:40:28'),(86,6,'login','Inicio de sesión exitoso','2025-11-01 22:17:56');
+INSERT INTO `historial_registros` VALUES (1,2,'registro','Usuario registrado en el sistema','2025-09-12 02:03:53'),(2,2,'login','Inicio de sesión exitoso','2025-09-12 02:04:09'),(3,1,'login','Inicio de sesión exitoso','2025-09-12 02:04:25'),(4,1,'login','Inicio de sesión exitoso','2025-09-12 02:17:03'),(5,1,'login','Inicio de sesión exitoso','2025-09-12 02:17:54'),(6,2,'login','Inicio de sesión exitoso','2025-09-12 02:18:08'),(7,1,'login','Inicio de sesión exitoso','2025-09-12 02:18:56'),(8,1,'registro_cliente','El administrador registró al cliente con correo: andrea12@gmail.com','2025-09-12 02:39:27'),(9,3,'registro','Usuario registrado en el sistema','2025-09-12 02:41:33'),(10,1,'login','Inicio de sesión exitoso','2025-09-12 02:45:27'),(11,1,'registro_cliente','El administrador registró al cliente con correo: vazquesj@gmail.com','2025-09-12 02:46:04'),(12,4,'registro','Usuario registrado en el sistema','2025-09-12 02:47:00'),(13,1,'login','Inicio de sesión exitoso','2025-09-12 02:57:25'),(14,1,'registro_compra','El administrador registró una compra para el cliente 1 en canal tienda_fisica','2025-09-12 03:17:57'),(15,1,'login','Inicio de sesión exitoso','2025-09-19 02:11:49'),(16,2,'login','Inicio de sesión exitoso','2025-09-19 02:12:13'),(17,1,'login','Inicio de sesión exitoso','2025-09-19 02:18:21'),(18,2,'login','Inicio de sesión exitoso','2025-09-19 02:32:43'),(19,1,'login','Inicio de sesión exitoso','2025-09-22 22:09:30'),(20,2,'login','Inicio de sesión exitoso','2025-09-22 22:09:37'),(21,2,'login','Inicio de sesión exitoso','2025-09-22 22:39:09'),(22,3,'login_fallido','Credenciales inválidas','2025-09-22 22:39:46'),(23,3,'login_fallido','Credenciales inválidas','2025-09-22 22:39:48'),(24,3,'login_fallido','Credenciales inválidas','2025-09-22 22:39:51'),(25,3,'login_fallido','Credenciales inválidas','2025-09-22 22:40:09'),(26,3,'login_fallido','Credenciales inválidas','2025-09-22 22:40:12'),(27,3,'login_fallido','Credenciales inválidas','2025-09-22 22:40:14'),(28,3,'login_fallido','Credenciales inválidas','2025-09-22 22:40:17'),(29,2,'login','Inicio de sesión exitoso','2025-09-22 22:40:28'),(30,2,'login','Inicio de sesión exitoso','2025-09-23 17:53:06'),(31,2,'login','Inicio de sesión exitoso','2025-09-23 17:59:51'),(32,2,'login','Inicio de sesión exitoso','2025-09-23 20:01:05'),(33,2,'login','Inicio de sesión exitoso','2025-09-23 20:06:39'),(34,2,'login','Inicio de sesión exitoso','2025-09-23 20:10:47'),(35,2,'login','Inicio de sesión exitoso','2025-09-23 20:23:28'),(36,2,'login','Inicio de sesión exitoso','2025-09-23 20:29:04'),(37,2,'login','Inicio de sesión exitoso','2025-09-23 20:33:34'),(38,2,'login','Inicio de sesión exitoso','2025-09-23 21:22:48'),(39,2,'login','Inicio de sesión exitoso','2025-09-23 21:40:05'),(40,2,'login','Inicio de sesión exitoso','2025-09-24 00:18:42'),(41,5,'registro','Usuario registrado en el sistema','2025-09-24 05:22:04'),(42,5,'login','Inicio de sesión exitoso','2025-09-24 05:22:16'),(43,5,'login_fallido','Credenciales inválidas','2025-09-25 18:06:01'),(44,5,'login','Inicio de sesión exitoso','2025-09-25 18:06:11'),(45,5,'login','Inicio de sesión exitoso','2025-09-25 18:22:29'),(46,5,'login','Inicio de sesión exitoso','2025-09-25 18:36:05'),(47,6,'registro','Usuario registrado en el sistema','2025-09-25 19:20:57'),(48,5,'login','Inicio de sesión exitoso','2025-09-25 19:37:42'),(49,5,'login','Inicio de sesión exitoso','2025-09-25 19:39:33'),(50,5,'login','Inicio de sesión exitoso','2025-09-25 19:45:01'),(51,5,'login','Inicio de sesión exitoso','2025-09-25 19:45:50'),(52,5,'login','Inicio de sesión exitoso','2025-09-25 20:12:36'),(53,5,'login','Inicio de sesión exitoso','2025-09-25 20:13:11'),(54,5,'login','Inicio de sesión exitoso','2025-09-25 22:57:14'),(55,5,'login','Inicio de sesión exitoso','2025-09-25 22:58:34'),(56,5,'login','Inicio de sesión exitoso','2025-09-25 23:19:53'),(57,1,'login_fallido','Credenciales inválidas','2025-09-25 23:20:49'),(58,1,'login','Inicio de sesión exitoso','2025-09-25 23:20:53'),(59,5,'login','Inicio de sesión exitoso','2025-09-26 00:24:20'),(60,5,'login','Inicio de sesión exitoso','2025-09-26 00:25:45'),(61,5,'login','Inicio de sesión exitoso','2025-10-01 18:24:17'),(62,5,'login','Inicio de sesión exitoso','2025-10-01 18:28:41'),(63,NULL,'login_fallido','Credenciales inválidas','2025-10-16 21:01:14'),(64,NULL,'login_fallido','Credenciales inválidas','2025-10-16 21:01:16'),(65,NULL,'login_fallido','Credenciales inválidas','2025-10-16 21:01:18'),(66,NULL,'login_fallido','Credenciales inválidas','2025-10-16 21:01:27'),(67,6,'login_fallido','Credenciales inválidas','2025-10-16 21:03:08'),(68,6,'login_fallido','Credenciales inválidas','2025-10-16 21:03:12'),(69,6,'login','Inicio de sesión exitoso','2025-10-16 21:03:15'),(70,5,'login','Inicio de sesión exitoso','2025-10-21 23:37:53'),(71,5,'login','Inicio de sesión exitoso','2025-10-21 23:47:38'),(72,5,'login','Inicio de sesión exitoso','2025-10-21 23:54:22'),(73,5,'login','Inicio de sesión exitoso','2025-10-21 23:54:40'),(74,5,'login','Inicio de sesión exitoso','2025-10-21 23:55:39'),(75,5,'login','Inicio de sesión exitoso','2025-10-21 23:56:18'),(76,5,'login','Inicio de sesión exitoso','2025-10-21 23:59:25'),(77,5,'login','Inicio de sesión exitoso','2025-10-22 00:01:08'),(78,6,'login','Inicio de sesión exitoso','2025-10-22 00:03:22'),(79,5,'login','Inicio de sesión exitoso','2025-10-22 01:40:33'),(80,6,'login','Inicio de sesión exitoso','2025-10-23 01:32:32'),(81,5,'login','Inicio de sesión exitoso','2025-10-23 21:15:39'),(82,6,'login','Inicio de sesión exitoso','2025-10-23 21:33:24'),(83,5,'login','Inicio de sesión exitoso','2025-11-01 21:03:20'),(84,6,'login','Inicio de sesión exitoso','2025-11-01 21:18:02'),(85,6,'login','Inicio de sesión exitoso','2025-11-01 21:40:28'),(86,6,'login','Inicio de sesión exitoso','2025-11-01 22:17:56'),(87,6,'login','Inicio de sesión exitoso','2025-11-02 01:22:46'),(88,5,'login','Inicio de sesión exitoso','2025-11-02 01:22:51'),(89,1,'login','Inicio de sesión exitoso','2025-11-02 01:31:46'),(90,1,'login','Inicio de sesión exitoso','2025-11-02 01:31:46'),(91,1,'login','Inicio de sesión exitoso','2025-11-02 01:31:47'),(92,1,'login_fallido','Credenciales inválidas','2025-11-02 01:31:53'),(93,1,'login_fallido','Credenciales inválidas','2025-11-02 01:42:19'),(94,NULL,'login_fallido','Credenciales inválidas','2025-11-02 01:43:23'),(95,NULL,'login_fallido','Credenciales inválidas','2025-11-02 01:43:24'),(96,NULL,'login','Inicio de sesión exitoso','2025-11-02 01:43:28'),(97,NULL,'login','Inicio de sesión exitoso','2025-11-02 01:43:31'),(98,NULL,'login','Inicio de sesión exitoso','2025-11-02 01:47:22'),(99,NULL,'login','Inicio de sesión exitoso','2025-11-02 01:47:23'),(100,NULL,'login','Inicio de sesión exitoso','2025-11-02 01:47:39'),(101,NULL,'login','Inicio de sesión exitoso','2025-11-02 01:47:39'),(102,NULL,'login','Inicio de sesión exitoso','2025-11-02 01:47:55'),(103,NULL,'login','Inicio de sesión exitoso','2025-11-02 01:47:56'),(104,NULL,'login','Inicio de sesión exitoso','2025-11-02 01:47:57'),(105,NULL,'login','Inicio de sesión exitoso','2025-11-02 01:48:17'),(106,NULL,'login','Inicio de sesión exitoso','2025-11-02 01:48:19'),(107,1,'login_fallido','Credenciales inválidas','2025-11-02 01:48:27'),(108,1,'login_fallido','Credenciales inválidas','2025-11-02 01:48:31'),(109,1,'login_fallido','Credenciales inválidas','2025-11-02 01:48:57'),(110,1,'login_fallido','Credenciales inválidas','2025-11-02 01:48:57'),(111,NULL,'login','Inicio de sesión exitoso','2025-11-02 01:49:40'),(112,NULL,'login','Inicio de sesión exitoso','2025-11-02 01:50:22'),(113,NULL,'login','Inicio de sesión exitoso','2025-11-02 02:27:03'),(114,NULL,'login','Inicio de sesión exitoso','2025-11-02 17:02:13'),(115,NULL,'login_fallido','Credenciales inválidas','2025-11-02 18:35:13'),(116,NULL,'login_fallido','Credenciales inválidas','2025-11-02 18:35:21'),(117,1,'login','Inicio de sesión exitoso','2025-11-02 18:36:26'),(118,1,'login','Inicio de sesión exitoso','2025-11-02 18:55:28'),(119,6,'login','Inicio de sesión exitoso','2025-11-02 19:41:17');
 /*!40000 ALTER TABLE `historial_registros` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -447,7 +474,7 @@ CREATE TABLE `pedidos` (
 
 LOCK TABLES `pedidos` WRITE;
 /*!40000 ALTER TABLE `pedidos` DISABLE KEYS */;
-INSERT INTO `pedidos` VALUES (1,6,'2025-10-23 02:33:09','2025-10-23 05:00:00','entregado',31.90),(2,6,'2025-10-23 03:57:40','2025-10-31 05:00:00','en_camino',5.50),(3,6,'2025-11-01 22:53:00',NULL,'',46.80),(4,6,'2025-11-01 23:00:39','2025-11-04 05:00:39','pendiente',70.60);
+INSERT INTO `pedidos` VALUES (1,6,'2025-10-23 02:33:09','2025-10-23 05:00:00','entregado',31.90),(2,6,'2025-10-23 03:57:40','2025-10-31 05:00:00','en_camino',5.50),(3,6,'2025-11-01 22:53:00','2025-11-02 02:02:13','cancelado',46.80),(4,6,'2025-11-01 23:00:39','2025-11-04 05:00:39','pendiente',70.60);
 /*!40000 ALTER TABLE `pedidos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -474,7 +501,7 @@ CREATE TABLE `producto_promocion` (
 
 LOCK TABLES `producto_promocion` WRITE;
 /*!40000 ALTER TABLE `producto_promocion` DISABLE KEYS */;
-INSERT INTO `producto_promocion` VALUES (1,1),(8,2),(16,3),(16,5),(27,4);
+INSERT INTO `producto_promocion` VALUES (16,5);
 /*!40000 ALTER TABLE `producto_promocion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -497,7 +524,7 @@ CREATE TABLE `productos` (
   PRIMARY KEY (`id_producto`),
   KEY `id_categoria` (`id_categoria`),
   CONSTRAINT `productos_ibfk_1` FOREIGN KEY (`id_categoria`) REFERENCES `categorias` (`id_categoria`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -506,7 +533,7 @@ CREATE TABLE `productos` (
 
 LOCK TABLES `productos` WRITE;
 /*!40000 ALTER TABLE `productos` DISABLE KEYS */;
-INSERT INTO `productos` VALUES (1,1,'Manzana Roja','Manzanas frescas y jugosas de temporada',5.50,'images/productos/manzana.png','2025-09-24 02:25:06',0),(2,2,'Pechuga de Pollo','Pechuga fresca sin piel ni hueso',18.90,'images/productos/pollo.png','2025-09-24 02:25:06',1),(3,3,'Avena Tradicional 500g','Avena fortificada ideal para desayuno',6.50,'images/productos/avena.png','2025-09-24 02:25:06',0),(4,4,'Yogurt Fresa 1L','Yogurt sabor fresa en envase familiar',8.90,'images/productos/yogurt.png','2025-09-24 02:25:06',1),(5,5,'Queso Edam 250g','Queso madurado tipo Edam',14.90,'images/productos/queso.png','2025-09-24 02:25:06',0),(6,6,'Arroz Extra 5kg','Arroz de grano largo extra',24.90,'images/productos/arroz.png','2025-09-24 02:25:06',0),(7,7,'Pan Ciabatta','Pan artesanal horneado del día',3.50,'images/productos/pan.png','2025-09-24 02:25:06',0),(8,8,'Pollo a la Brasa Entero','Pollo rostizado con papas y ensalada',39.90,'images/productos/brasa.png','2025-09-24 02:25:06',0),(9,9,'Choclo Congelado 1kg','Choclo desgranado congelado',12.50,'images/productos/choclo.png','2025-09-24 02:25:06',0),(10,10,'Coca Cola 1.5L','Bebida gaseosa Coca Cola 1.5 litros',7.00,'images/productos/gaseosa.png','2025-09-24 02:25:06',0),(11,11,'Vino Tinto Borgoña 750ml','Vino de mesa semidulce',19.90,'images/productos/vino.png','2025-09-24 02:25:06',1),(12,12,'Detergente en Polvo 1kg','Detergente multiusos para ropa',15.90,'images/productos/detergente.png','2025-09-24 02:25:06',0),(13,13,'Cepillo Dental Suave','Cepillo dental con cerdas suaves',6.90,'images/productos/cepillo.png','2025-09-24 02:25:06',0),(14,14,'Pañales Huggies x30','Pañales Huggies recién nacido ultra suave',34.90,'images/productos/panales.png','2025-09-24 02:25:06',1),(15,15,'Pedigree 2kg','Alimento balanceado Pedigree para perros adultos',28.90,'images/productos/pedigree.png','2025-09-24 02:25:06',0),(16,16,'Laptop HP','Laptop HP Core i5 8GB RAM 256GB SSD',2199.00,'images/productos/laptop_hp.png','2025-09-24 02:25:06',1),(17,17,'Refrigeradora 300L','Refrigeradora no frost de dos puertas',1499.00,'images/productos/refrigeradora.png','2025-09-24 02:25:06',1),(18,18,'Sofá 3 Plazas','Sofá tapizado en tela gris',899.00,'images/productos/sofa.png','2025-09-24 02:25:06',0),(19,19,'Colchón 2 Plazas','Colchón ortopédico de resortes',1200.00,'images/productos/colchon.png','2025-09-24 02:25:06',0),(20,20,'Juego de Vasos 6pz','Set de vasos de vidrio templado',29.90,'images/productos/vasos.png','2025-09-24 02:25:06',0),(21,21,'Lego Classic 500pz','Bloques de construcción creativos',199.00,'images/productos/lego.png','2025-09-24 02:25:06',0),(22,22,'Pelota de Fútbol','Balón oficial talla 5',89.90,'images/productos/pelota.png','2025-09-24 02:25:06',0),(23,23,'Cuna de Madera','Cuna infantil con barandas desmontables',499.00,'images/productos/cuna.png','2025-09-24 02:25:06',0),(24,24,'Labial Matte','Labial mate de larga duración',39.90,'images/productos/labial.png','2025-09-24 02:25:06',0),(25,25,'Cuaderno A4 100 hojas','Cuaderno rayado tamaño A4',12.50,'images/productos/cuaderno.png','2025-09-24 02:25:06',0),(26,26,'Aceite de Motor 20W50','Aceite premium para motores 1L',49.90,'images/productos/aceite_motor.png','2025-09-24 02:25:06',0),(27,27,'Taladro Eléctrico 600W','Taladro eléctrico con percusión',399.00,'images/productos/taladro.png','2025-09-24 02:25:06',0);
+INSERT INTO `productos` VALUES (1,1,'Manzana Roja','Manzanas frescas y jugosas de temporada',5.55,'images/productos/manzana.png','2025-09-24 02:25:06',0),(2,2,'Pechuga de Pollo','Pechuga fresca sin piel ni hueso',18.90,'images/productos/pollo.png','2025-09-24 02:25:06',1),(3,3,'Avena Tradicional 500g','Avena fortificada ideal para desayuno',6.50,'images/productos/avena.png','2025-09-24 02:25:06',0),(4,4,'Yogurt Fresa 1L','Yogurt sabor fresa en envase familiar',8.90,'images/productos/yogurt.png','2025-09-24 02:25:06',1),(5,5,'Queso Edam 250g','Queso madurado tipo Edam',14.90,'images/productos/queso.png','2025-09-24 02:25:06',0),(6,6,'Arroz Extra 5kg','Arroz de grano largo extra',24.90,'images/productos/arroz.png','2025-09-24 02:25:06',0),(7,7,'Pan Ciabatta','Pan artesanal horneado del día',3.50,'images/productos/pan.png','2025-09-24 02:25:06',0),(8,8,'Pollo a la Brasa Entero','Pollo rostizado con papas y ensalada',39.90,'images/productos/brasa.png','2025-09-24 02:25:06',0),(9,9,'Choclo Congelado 1kg','Choclo desgranado congelado',12.50,'images/productos/choclo.png','2025-09-24 02:25:06',0),(10,10,'Coca Cola 1.5L','Bebida gaseosa Coca Cola 1.5 litros',7.00,'images/productos/gaseosa.png','2025-09-24 02:25:06',0),(11,11,'Vino Tinto Borgoña 750ml','Vino de mesa semidulce',19.90,'images/productos/vino.png','2025-09-24 02:25:06',1),(12,12,'Detergente en Polvo 1kg','Detergente multiusos para ropa',15.90,'images/productos/detergente.png','2025-09-24 02:25:06',0),(13,13,'Cepillo Dental Suave','Cepillo dental con cerdas suaves',6.90,'images/productos/cepillo.png','2025-09-24 02:25:06',0),(14,14,'Pañales Huggies x30','Pañales Huggies recién nacido ultra suave',34.90,'images/productos/panales.png','2025-09-24 02:25:06',1),(15,15,'Pedigree 2kg','Alimento balanceado Pedigree para perros adultos',28.90,'images/productos/pedigree.png','2025-09-24 02:25:06',0),(16,16,'Laptop HP','Laptop HP Core i5 8GB RAM 256GB SSD',2199.00,'images/productos/laptop_hp.png','2025-09-24 02:25:06',1),(17,17,'Refrigeradora 300L','Refrigeradora no frost de dos puertas',1499.00,'images/productos/refrigeradora.png','2025-09-24 02:25:06',1),(18,18,'Sofá 3 Plazas','Sofá tapizado en tela gris',899.00,'images/productos/sofa.png','2025-09-24 02:25:06',0),(19,19,'Colchón 2 Plazas','Colchón ortopédico de resortes',1200.00,'images/productos/colchon.png','2025-09-24 02:25:06',0),(20,20,'Juego de Vasos 6pz','Set de vasos de vidrio templado',29.90,'images/productos/vasos.png','2025-09-24 02:25:06',0),(21,21,'Lego Classic 500pz','Bloques de construcción creativos',199.00,'images/productos/lego.png','2025-09-24 02:25:06',0),(22,22,'Pelota de Fútbol','Balón oficial talla 5',89.90,'images/productos/pelota.png','2025-09-24 02:25:06',0),(23,23,'Cuna de Madera','Cuna infantil con barandas desmontables',499.00,'images/productos/cuna.png','2025-09-24 02:25:06',0),(24,24,'Labial Matte','Labial mate de larga duración',39.90,'images/productos/labial.png','2025-09-24 02:25:06',0),(25,25,'Cuaderno A4 100 hojas','Cuaderno rayado tamaño A4',12.50,'images/productos/cuaderno.png','2025-09-24 02:25:06',0),(26,26,'Aceite de Motor 20W50','Aceite premium para motores 1L',49.90,'images/productos/aceite_motor.png','2025-09-24 02:25:06',0),(27,27,'Taladro Eléctrico 600W','Taladro eléctrico con percusión',395.00,'images/productos/1762057674_taladro.webp','2025-09-24 02:25:06',0),(29,10,'Agua Mineral San Luis 500ml','Agua mineral natural sin gas. Botella de 500 ml ideal para llevar.',1.50,'images/productos/1762057716_agua-san-luis-sin-gas-625ml-5024-default-1.jpg','2025-11-02 04:28:36',0);
 /*!40000 ALTER TABLE `productos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -526,7 +553,7 @@ CREATE TABLE `promociones` (
   `fecha_fin` date DEFAULT NULL,
   `activo` tinyint(1) DEFAULT 1,
   PRIMARY KEY (`id_promocion`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -535,7 +562,7 @@ CREATE TABLE `promociones` (
 
 LOCK TABLES `promociones` WRITE;
 /*!40000 ALTER TABLE `promociones` DISABLE KEYS */;
-INSERT INTO `promociones` VALUES (1,'Descuento Manzana Roja','10% de descuento en la Manzana Roja fresca',10.00,'2025-09-23','2025-09-30',1),(2,'Descuento Pollo a la Brasa','15% de descuento en el Pollo a la Brasa Entero',15.00,'2025-09-23','2025-09-30',1),(3,'Descuento Laptop HP 14\"','8% de descuento en la Laptop HP 14\"',8.00,'2025-09-23','2025-09-30',1),(4,'Descuento Taladro Eléctrico','12% de descuento en el Taladro Eléctrico 600W',12.00,'2025-09-23','2025-09-30',1),(5,'Promoción Laptop HP','30% de descuento en la Laptop HP por dos meses',30.00,'2025-10-23','2025-12-23',1);
+INSERT INTO `promociones` VALUES (5,'Promoción Laptop HP','30% de descuento en la Laptop HP por dos meses',30.00,'2025-10-23','2025-12-23',1),(6,'Descuento de Primavera en Frutas','Obtén un 20% de descuento en todas las frutas. Promoción válida por tiempo limitado',20.00,'2025-11-01','2025-11-03',1);
 /*!40000 ALTER TABLE `promociones` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -610,7 +637,7 @@ CREATE TABLE `usuarios` (
   `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id_usuario`),
   UNIQUE KEY `correo` (`correo`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -619,7 +646,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'Elias','Urbano','999888777','elias.admin@gmail.com',NULL,'2025-09-12 02:02:25'),(2,'Pepe','Perez','957428615','pepe1@gmail.com',NULL,'2025-09-12 02:03:53'),(3,'Andrea','Sanchez','924582277','andrea12@gmail.com',NULL,'2025-09-12 02:41:33'),(4,'Rafael','Dominguez','923974159','rafad@gmail.com',NULL,'2025-09-12 02:47:00'),(5,'Diego','Tataje','957842658','diegot1@gmail.com',NULL,'2025-09-24 05:22:04'),(6,'Elias','Urbano','906497244','ursam26@gmail.com','uploads/perfiles/69067a7fe8778_h1.png','2025-09-25 19:20:57'),(7,'Gabriel','Mendez','987654321','gabrielm@telehealth.com',NULL,'2025-10-16 21:45:22');
+INSERT INTO `usuarios` VALUES (1,'Elias','Urbano','999888777','elias.admin@gmail.com',NULL,'2025-09-12 02:02:25'),(2,'Pepe','Perez','957428615','pepe1@gmail.com',NULL,'2025-09-12 02:03:53'),(3,'Andrea','Sanchez','924582277','andrea12@gmail.com',NULL,'2025-09-12 02:41:33'),(4,'Rafael','Dominguez','923974159','rafad@gmail.com',NULL,'2025-09-12 02:47:00'),(5,'Diego','Tataje','957842658','diegot1@gmail.com',NULL,'2025-09-24 05:22:04'),(6,'Elias','Urbano','906497244','ursam26@gmail.com','uploads/perfiles/69067a7fe8778_h1.png','2025-09-25 19:20:57');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -632,4 +659,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-01 19:21:48
+-- Dump completed on 2025-11-02 14:43:52
