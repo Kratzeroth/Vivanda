@@ -7,7 +7,6 @@ import Promotions from "./admin/promotions.jsx";
 import Orders from "./admin/orders.jsx";
 import Users from "./admin/users.jsx";
 import Categories from "./admin/categories.jsx";
-import Coupons from "./admin/coupons.jsx";
 import Customers from "./admin/customers.jsx";
 import Inventory from "./admin/inventory.jsx";
 import Reports from "./admin/reports.jsx";
@@ -24,7 +23,6 @@ export default function App() {
       <Route path="/orders" element={<Orders />} />
       <Route path="/users" element={<Users />} />
       <Route path="/categories" element={<Categories />} />
-      <Route path="/coupons" element={<Coupons />} />
       <Route path="/customers" element={<Customers />} />
       <Route path="/inventory" element={<Inventory />} />
       <Route path="/reports" element={<Reports />} />

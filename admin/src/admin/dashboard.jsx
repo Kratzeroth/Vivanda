@@ -33,17 +33,64 @@ ChartJS.defaults.color = "#fff";
 ChartJS.defaults.borderColor = "#444";
 
 export default function Dashboard() {
+  const [categories, setCategories] = useState([]);
+  const [banners, setBanners] = useState([]);
+  const [promotions, setPromotions] = useState([]);
   // Estados para los filtros
   const [month, setMonth] = useState("Enero");
   const [year, setYear] = useState("2025");
 
-  // Datos de ventas por mes (simulados, se podrían filtrar según mes/año)
+  // Estados para datos reales
+  const [orders, setOrders] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [inventory, setInventory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    setLoading(true);
+    Promise.all([
+      fetch("http://localhost/Vivanda/admin/backend/orders.php").then(res => res.json()),
+      fetch("http://localhost/Vivanda/admin/backend/productos.php").then(res => res.json()),
+      fetch("http://localhost/Vivanda/admin/backend/users.php").then(res => res.json()),
+      fetch("http://localhost/Vivanda/admin/backend/customers.php").then(res => res.json()),
+      fetch("http://localhost/Vivanda/admin/backend/inventory.php").then(res => res.json()),
+      fetch("http://localhost/Vivanda/admin/backend/categories.php").then(res => res.json()),
+      fetch("http://localhost/Vivanda/admin/backend/banners.php").then(res => res.json()),
+      fetch("http://localhost/Vivanda/admin/backend/promotions.php").then(res => res.json())
+    ]).then(([ordersData, productsData, usersData, customersData, inventoryData, categoriesData, bannersData, promotionsData]) => {
+      setOrders(Array.isArray(ordersData) ? ordersData : []);
+      setProducts(Array.isArray(productsData) ? productsData : []);
+      setUsers(Array.isArray(usersData) ? usersData : []);
+      setCustomers(Array.isArray(customersData) ? customersData : []);
+      setInventory(Array.isArray(inventoryData) ? inventoryData : []);
+      setCategories(Array.isArray(categoriesData) ? categoriesData : []);
+      setBanners(Array.isArray(bannersData) ? bannersData : []);
+      setPromotions(Array.isArray(promotionsData) ? promotionsData : []);
+      setError(null);
+    }).catch(() => {
+      setError("Error al cargar datos del dashboard");
+    }).finally(() => {
+      setLoading(false);
+    });
+  }, []);
+
+  // Datos de ventas por mes (reales)
+  const salesLabels = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+  const salesByMonth = Array(12).fill(0);
+  orders.forEach(order => {
+    const fecha = new Date(order.fecha_pedido);
+    const mes = fecha.getMonth();
+    salesByMonth[mes] += parseFloat(order.total || 0);
+  });
   const salesData = {
-    labels: ["Ene", "Feb", "Mar", "Abr", "May", "Jun"],
+    labels: salesLabels,
     datasets: [
       {
         label: "Ventas ($)",
-        data: [1200, 1900, 3000, 2500, 3200, 4100],
+        data: salesByMonth,
         backgroundColor: "rgba(0, 123, 255, 0.3)",
         borderColor: "rgba(0, 123, 255, 1)",
         borderWidth: 2,
@@ -104,19 +151,68 @@ export default function Dashboard() {
     ]
   };
 
-  const topProducts = {
-    labels: ["Laptop", "Audífonos", "Mouse", "Teclado", "Monitor"],
+  // Productos por categoría
+  const categoryCounts = categories.map(cat => {
+    return products.filter(p => p.nombre_categoria === cat.nombre_categoria).length;
+  });
+  const categoryData = {
+    labels: categories.map(cat => cat.nombre_categoria),
     datasets: [
       {
-        label: "Más vendidos",
-        data: [150, 120, 100, 80, 70],
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.6)",
-          "rgba(54, 162, 235, 0.6)",
-          "rgba(255, 206, 86, 0.6)",
-          "rgba(75, 192, 192, 0.6)",
-          "rgba(153, 102, 255, 0.6)"
-        ],
+        label: "Productos por Categoría",
+        data: categoryCounts,
+        backgroundColor: categories.map((_, i) => `rgba(${50+i*30}, ${100+i*20}, ${200-i*10}, 0.6)`),
+        borderColor: "rgba(255,255,255,0.4)",
+        borderWidth: 1
+      }
+    ]
+  };
+
+  // Promociones activas
+  const activePromos = promotions.filter(p => p.activo);
+  const promoData = {
+    labels: activePromos.map(p => p.titulo),
+    datasets: [
+      {
+        label: "Promociones activas",
+        data: activePromos.map(p => p.descuento_porcentaje || 0),
+        backgroundColor: activePromos.map((_, i) => `rgba(${200-i*20}, ${50+i*30}, ${100+i*20}, 0.6)`),
+        borderColor: "rgba(255,255,255,0.4)",
+        borderWidth: 1
+      }
+    ]
+  };
+
+  // Banners activos
+  const activeBanners = banners.filter(b => b.activo);
+  const bannerData = {
+    labels: activeBanners.map(b => b.titulo),
+    datasets: [
+      {
+        label: "Banners activos",
+        data: activeBanners.map(() => 1),
+        backgroundColor: activeBanners.map((_, i) => `rgba(${100+i*30}, ${200-i*10}, ${50+i*20}, 0.6)`),
+        borderColor: "rgba(255,255,255,0.4)",
+        borderWidth: 1
+      }
+    ]
+  };
+
+
+  // Clientes por mes
+  const clientesPorMes = Array(12).fill(0);
+  customers.forEach(c => {
+    const fecha = new Date(c.fecha_registro);
+    const mes = fecha.getMonth();
+    clientesPorMes[mes]++;
+  });
+  const clientesData = {
+    labels: salesLabels,
+    datasets: [
+      {
+        label: "Clientes registrados",
+        data: clientesPorMes,
+        backgroundColor: "rgba(54, 162, 235,0.6)",
         borderColor: "rgba(255,255,255,0.4)",
         borderWidth: 1
       }
@@ -211,78 +307,77 @@ export default function Dashboard() {
 
         {/* CARDS DE ESTADÍSTICAS */}
         <div className="stats-grid">
-          <div className="card blue">Productos: 220</div>
-          <div className="card green">Usuarios Activos: 1200</div>
-          <div className="card orange">Pedidos Hoy: 45</div>
-          <div className="card grey">Ganancia del día: $980</div>
+          <div className="card blue">Productos: {products.length}</div>
+          <div className="card green">Usuarios: {users.length}</div>
+          <div className="card orange">Pedidos: {orders.length}</div>
+          <div className="card grey">Clientes: {customers.length}</div>
+          <div className="card purple">Categorías: {categories.length}</div>
+          <div className="card yellow">Banners: {banners.length}</div>
+          <div className="card pink">Promociones: {promotions.length}</div>
         </div>
 
-        {/* GRÁFICOS */}
-        <div className="charts-grid">
-          <div className="chart-box">
-            <h3>Resumen Financiero y de Ingresos</h3>
-            <Line data={salesData} />
+        {loading ? (
+          <div className="loading">Cargando datos...</div>
+        ) : error ? (
+          <div className="error-msg">{error}</div>
+        ) : (
+          <div className="charts-grid">
+            <div className="chart-box">
+              <h3>Ventas por Mes</h3>
+              <Line data={salesData} />
+            </div>
+            <div className="chart-box">
+              <h3>Productos por Categoría</h3>
+              <Bar data={categoryData} />
+            </div>
+            <div className="chart-box">
+              <h3>Promociones Activas</h3>
+              <Bar data={promoData} />
+            </div>
+            <div className="chart-box">
+              <h3>Banners Activos</h3>
+              <Bar data={bannerData} />
+            </div>
+            <div className="chart-box">
+              <h3>Clientes Registrados por Mes</h3>
+              <Line data={clientesData} />
+            </div>
           </div>
-
-          <div className="chart-box">
-            <h3>Rendimiento del Embudo de Venta</h3>
-            <Bar data={conversionData} />
-          </div>
-
-          <div className="chart-box">
-            <h3>Valor Promedio de Compra</h3>
-            <Bar data={avgOrder} />
-          </div>
-
-          <div className="chart-box">
-            <h3>Análisis de Carritos Abandonados</h3>
-            <Doughnut data={abandonedCart} />
-          </div>
-
-          <div className="chart-box">
-            <h3>Costo por Nuevo Cliente (CAC)</h3>
-            <Bar data={cacData} />
-          </div>
-
-          <div className="chart-box">
-            <h3>Productos Estrella y Stock</h3>
-            <Bar data={topProducts} />
-          </div>
-
-          <div className="chart-box">
-            <h3>Fuentes de Tráfico y Origen de Ventas</h3>
-            <Bar data={trafficData} />
-          </div>
-
-          <div className="chart-box">
-            <h3>Rentabilidad por Venta</h3>
-            <Bar data={marginData} />
-          </div>
-
-          <div className="chart-box">
-            <h3>Fidelidad y Retorno de Clientes</h3>
-            <Bar data={retentionData} />
-          </div>
-
-          <div className="chart-box">
-            <h3>Gestión y Tasas de Devoluciones</h3>
-            <Doughnut data={returnsData} />
-          </div>
-        </div>
+        )}
 
         {/* DETALLE DE INFORMACIÓN ADICIONAL SIMULADA PARA EXTENDER EL CÓDIGO */}
         <div className="extra-info">
           <h2>Información Extendida por Filtro</h2>
           <p>Mes seleccionado: {month}</p>
           <p>Año seleccionado: {year}</p>
-          <p>Esta sección puede mostrar tablas o detalles adicionales filtrados según mes y año.</p>
 
-          <div className="extra-cards">
-            <div className="card blue">Visitas Web: 5400</div>
-            <div className="card green">Suscripciones: 320</div>
-            <div className="card orange">Comentarios: 80</div>
-            <div className="card grey">Tickets Soporte: 15</div>
-          </div>
+          {/* Filtrar datos por mes y año */}
+          {(() => {
+            const mesIndex = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"].indexOf(month);
+            const anioNum = parseInt(year);
+            // Pedidos filtrados
+            const pedidosFiltrados = orders.filter(o => {
+              const fecha = new Date(o.date || o.fecha_pedido);
+              return fecha.getMonth() === mesIndex && fecha.getFullYear() === anioNum;
+            });
+            // Clientes filtrados
+            const clientesFiltrados = customers.filter(c => {
+              const fecha = new Date(c.fecha_registro);
+              return fecha.getMonth() === mesIndex && fecha.getFullYear() === anioNum;
+            });
+            // Total ventas
+            const totalVentas = pedidosFiltrados.reduce((acc, o) => acc + parseFloat(o.total || 0), 0);
+            // Productos vendidos (simulado: cantidad de pedidos)
+            const productosVendidos = pedidosFiltrados.length;
+            return (
+              <div className="extra-cards">
+                <div className="card blue">Pedidos: {pedidosFiltrados.length}</div>
+                <div className="card green">Clientes registrados: {clientesFiltrados.length}</div>
+                <div className="card orange">Ventas totales: ${totalVentas.toFixed(2)}</div>
+                <div className="card grey">Productos vendidos: {productosVendidos}</div>
+              </div>
+            );
+          })()}
         </div>
 
        

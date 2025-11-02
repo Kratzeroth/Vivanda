@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../componentes/sidebar.jsx";
 import { Bar, Line, Doughnut, Radar, Pie } from "react-chartjs-2";
 import "../assets/css/reports.css";
@@ -40,17 +40,69 @@ export default function Reports() {
     maxAmount: ""
   });
 
-  // Datos inventados de ejemplo
-  const transactions = [
-    { id: 1, type: "ingreso", amount: 1200, category: "Electrónica", customer: "Juan", date: "2025-10-01", product: "Laptop" },
-    { id: 2, type: "gasto", amount: 400, category: "Hogar", customer: "Proveedor A", date: "2025-10-02", product: "Silla" },
-    { id: 3, type: "ingreso", amount: 800, category: "Ropa", customer: "María", date: "2025-10-03", product: "Camiseta" },
-    { id: 4, type: "ingreso", amount: 1500, category: "Electrónica", customer: "Pedro", date: "2025-10-05", product: "Laptop" },
-    { id: 5, type: "gasto", amount: 300, category: "Marketing", customer: "Agencia X", date: "2025-10-06", product: "Publicidad" },
-    { id: 6, type: "ingreso", amount: 700, category: "Hogar", customer: "Ana", date: "2025-10-07", product: "Mesa" },
-    { id: 7, type: "ingreso", amount: 1200, category: "Ropa", customer: "Luis", date: "2025-10-08", product: "Pantalón" },
-  ];
+  // Estados para datos reales
+  const [orders, setOrders] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [promotions, setPromotions] = useState([]);
+  const [inventory, setInventory] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [detalles, setDetalles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  useEffect(() => {
+    setLoading(true);
+    Promise.all([
+      fetch("http://localhost/Vivanda/admin/backend/orders.php").then(r => r.json()),
+      fetch("http://localhost/Vivanda/admin/backend/productos.php").then(r => r.json()),
+      fetch("http://localhost/Vivanda/admin/backend/customers.php").then(r => r.json()),
+      fetch("http://localhost/Vivanda/admin/backend/categories.php").then(r => r.json()),
+      fetch("http://localhost/Vivanda/admin/backend/promotions.php").then(r => r.json()),
+      fetch("http://localhost/Vivanda/admin/backend/inventory.php").then(r => r.json()),
+      fetch("http://localhost/Vivanda/admin/backend/users.php").then(r => r.json()),
+      fetch("http://localhost/Vivanda/admin/backend/pedido_detalle.php").then(r => r.json())
+    ]).then(([orders, products, customers, categories, promotions, inventory, users, detalles]) => {
+      setOrders(Array.isArray(orders) ? orders : []);
+      setProducts(Array.isArray(products) ? products : []);
+      setCustomers(Array.isArray(customers) ? customers : []);
+      setCategories(Array.isArray(categories) ? categories : []);
+      setPromotions(Array.isArray(promotions) ? promotions : []);
+      setInventory(Array.isArray(inventory) ? inventory : []);
+      setUsers(Array.isArray(users) ? users : []);
+      setDetalles(Array.isArray(detalles) ? detalles : []);
+      setError(null);
+    }).catch(() => setError("Error al cargar datos"))
+      .finally(() => setLoading(false));
+  }, []);
+
+  // Unificar datos para la tabla y gráficos
+  const transactions = orders.flatMap(o => {
+    // Buscar detalles de productos para este pedido
+    const detallesPedido = detalles.filter(d => d.id_pedido === o.id);
+    if (detallesPedido.length === 0) {
+      return [{
+        id: o.id,
+        type: "ingreso",
+        amount: o.total,
+        category: "Sin categoría",
+        customer: o.customer,
+        date: o.date,
+        product: "-"
+      }];
+    }
+    // Si hay varios productos, crear una fila por producto
+    return detallesPedido.map(d => ({
+      id: o.id,
+      type: "ingreso",
+      amount: (d.precio_unitario * d.cantidad),
+      category: d.nombre_categoria || "Sin categoría",
+      customer: o.customer,
+      date: o.date,
+      product: d.nombre_producto || "-"
+    }));
+  });
   // Filtrado avanzado
   const filteredTransactions = transactions.filter(t => {
     let match = filter.type === "all" ? true : t.type === filter.type;
@@ -62,32 +114,28 @@ export default function Reports() {
     return match;
   });
 
-  // Gráficos de reportes
+  // Gráficos de reportes con datos reales
   const salesData = {
     labels: filteredTransactions.map(t => t.date),
     datasets: [
       {
         label: "Ingresos",
-        data: filteredTransactions.map(t => t.type === "ingreso" ? t.amount : 0),
+        data: filteredTransactions.map(t => t.amount),
         backgroundColor: "rgba(46,204,113,0.7)"
-      },
-      {
-        label: "Gastos",
-        data: filteredTransactions.map(t => t.type === "gasto" ? t.amount : 0),
-        backgroundColor: "rgba(231,76,60,0.7)"
       }
     ]
   };
 
+  const categoryList = [...new Set(transactions.map(t => t.category))];
   const categoryData = {
-    labels: [...new Set(transactions.map(t => t.category))],
+    labels: categoryList,
     datasets: [
       {
         label: "Ventas por Categoría",
-        data: [...new Set(transactions.map(t => t.category))].map(cat =>
-          transactions.filter(t => t.category === cat && t.type === "ingreso").reduce((a,b) => a+b.amount, 0)
+        data: categoryList.map(cat =>
+          transactions.filter(t => t.category === cat).reduce((a,b) => a+b.amount, 0)
         ),
-        backgroundColor: ["#3498db", "#2ecc71", "#f1c40f", "#e74c3c", "#9b59b6"]
+        backgroundColor: ["#3498db", "#2ecc71", "#f1c40f", "#e74c3c", "#9b59b6", "#34495e", "#fdcb6e"]
       }
     ]
   };
@@ -99,8 +147,7 @@ export default function Reports() {
         label: "Balance Acumulado",
         data: filteredTransactions.reduce((acc,t) => {
           const last = acc.length > 0 ? acc[acc.length-1] : 0;
-          const val = t.type === "ingreso" ? t.amount : -t.amount;
-          acc.push(last+val);
+          acc.push(last + t.amount);
           return acc;
         }, []),
         borderColor: "#3498db",
@@ -110,45 +157,68 @@ export default function Reports() {
     ]
   };
 
+  // Productos más vendidos
+  const productCount = {};
+  transactions.forEach(t => {
+    if (!productCount[t.product]) productCount[t.product] = 0;
+    productCount[t.product] += 1;
+  });
+  const topProducts = Object.entries(productCount).sort((a,b) => b[1]-a[1]).slice(0,5);
   const topProductsData = {
-    labels: ["Laptop", "Camiseta", "Mesa", "Pantalón", "Silla"],
+    labels: topProducts.map(([name]) => name),
     datasets: [
       {
         label: "Productos más vendidos",
-        data: [2,1,1,1,1],
+        data: topProducts.map(([_, count]) => count),
         backgroundColor: ["#e74c3c","#2ecc71","#3498db","#f1c40f","#9b59b6"]
       }
     ]
   };
 
+  // Clientes más activos
+  const customerCount = {};
+  transactions.forEach(t => {
+    if (!customerCount[t.customer]) customerCount[t.customer] = 0;
+    customerCount[t.customer] += 1;
+  });
+  const topCustomers = Object.entries(customerCount).sort((a,b) => b[1]-a[1]).slice(0,5);
   const topCustomersData = {
-    labels: ["Juan", "María", "Pedro", "Ana", "Luis"],
+    labels: topCustomers.map(([name]) => name),
     datasets: [
       {
         label: "Clientes más activos",
-        data: [1,1,1,1,1],
+        data: topCustomers.map(([_, count]) => count),
         backgroundColor: ["#3498db","#2ecc71","#f1c40f","#e74c3c","#9b59b6"]
       }
     ]
   };
 
+  // Inventario
+  const inventoryLabels = inventory.map(i => i.nombre_producto);
   const inventoryData = {
-    labels: ["Laptop", "Auriculares", "Mouse", "Teclado", "Monitor"],
+    labels: inventoryLabels,
     datasets: [
       {
         label: "Stock Disponible",
-        data: [30, 50, 70, 40, 25],
+        data: inventory.map(i => i.stock || 0),
         backgroundColor: "rgba(241,196,15,0.6)"
       }
     ]
   };
 
+  // Pedidos pendientes/completados/cancelados
+  let pendientes = 0, completadas = 0, canceladas = 0;
+  orders.forEach(o => {
+    if (o.status === "Pendiente") pendientes++;
+    else if (o.status === "Entregado" || o.status === "Completado") completadas++;
+    else if (o.status === "Cancelado") canceladas++;
+  });
   const pendingOrdersData = {
     labels: ["Pendientes", "Completadas", "Canceladas"],
     datasets: [
       {
         label: "Pedidos",
-        data: [5,12,2],
+        data: [pendientes, completadas, canceladas],
         backgroundColor: ["#e74c3c","#2ecc71","#3498db"]
       }
     ]
@@ -157,69 +227,60 @@ export default function Reports() {
   return (
     <div className="layout">
       <Sidebar />
-
       <div className="reports-content">
         <h1>Reportes E-commerce</h1>
-
-        {/* Filtros */}
         <div className="reports-filters">
           <select value={filter.type} onChange={e=>setFilter({...filter,type:e.target.value})}>
             <option value="all">Todos</option>
             <option value="ingreso">Ingresos</option>
-            <option value="gasto">Gastos</option>
           </select>
           <select value={filter.category} onChange={e=>setFilter({...filter,category:e.target.value})}>
             <option value="all">Todas Categorías</option>
-            <option value="Electrónica">Electrónica</option>
-            <option value="Ropa">Ropa</option>
-            <option value="Hogar">Hogar</option>
-            <option value="Marketing">Marketing</option>
+            {categoryList.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
           </select>
           <input type="date" value={filter.startDate} onChange={e=>setFilter({...filter,startDate:e.target.value})} />
           <input type="date" value={filter.endDate} onChange={e=>setFilter({...filter,endDate:e.target.value})} />
           <input type="number" placeholder="Monto min" value={filter.minAmount} onChange={e=>setFilter({...filter,minAmount:e.target.value})}/>
           <input type="number" placeholder="Monto max" value={filter.maxAmount} onChange={e=>setFilter({...filter,maxAmount:e.target.value})}/>
         </div>
-
-        {/* Gráficos */}
+        {loading ? (
+          <div className="loading">Cargando datos...</div>
+        ) : error ? (
+          <div className="error-msg">{error}</div>
+        ) : (
+        <>
         <div className="reports-charts">
           <div className="chart-box">
-            <h3>Ingresos vs Gastos</h3>
+            <h3>Ingresos</h3>
             <Bar data={salesData} />
           </div>
-
           <div className="chart-box">
             <h3>Ventas por Categoría</h3>
             <Doughnut data={categoryData} />
           </div>
-
           <div className="chart-box full-width">
             <h3>Balance Acumulado</h3>
             <Line data={balanceData} />
           </div>
-
           <div className="chart-box">
             <h3>Productos Más Vendidos</h3>
             <Bar data={topProductsData} />
           </div>
-
           <div className="chart-box">
             <h3>Clientes Más Activos</h3>
             <Bar data={topCustomersData} />
           </div>
-
           <div className="chart-box">
             <h3>Inventario</h3>
             <Bar data={inventoryData} />
           </div>
-
           <div className="chart-box">
             <h3>Pedidos Pendientes</h3>
             <Pie data={pendingOrdersData} />
           </div>
         </div>
-
-        {/* Tabla de transacciones */}
         <div className="reports-table-wrapper">
           <table className="reports-table">
             <thead>
@@ -228,7 +289,7 @@ export default function Reports() {
                 <th>Producto</th>
                 <th>Categoría</th>
                 <th>Tipo</th>
-                <th>Cliente/Proveedor</th>
+                <th>Cliente</th>
                 <th>Monto</th>
               </tr>
             </thead>
@@ -246,6 +307,8 @@ export default function Reports() {
             </tbody>
           </table>
         </div>
+        </>
+        )}
       </div>
     </div>
   );

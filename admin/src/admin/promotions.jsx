@@ -1,60 +1,91 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../componentes/sidebar.jsx";
 import "../assets/css/promotions.css";
 
-// ----------------------- DATOS INICIALES -----------------------
-const initialProducts = [
-  "Laptop Gamer",
-  "Monitor 144Hz",
-  "Mouse Logitech",
-  "Teclado Mecánico",
-  "Auriculares Bluetooth",
-  "Webcam 1080p",
-  "Parlante Bluetooth",
-  "Mousepad",
-  "Auriculares Gamer",
-  "Teclado RGB",
-];
 
-const initialPromotions = [
-  { id: 1, name: "Black Friday", type: "Porcentaje", value: 20, active: true, products: ["Laptop Gamer", "Monitor 144Hz"] },
-  { id: 2, name: "Envío Gratis", type: "Envío", value: 0, active: true, products: [] },
-];
-
-const initialSpecials = [
-  { id: 1, name: "10% en Electrónica", description: "Aplicable a laptops, monitores y accesorios.", active: true },
-  { id: 2, name: "Envío Gratis", description: "Pedidos superiores a S/150.", active: true },
-];
 
 // ----------------------- COMPONENTE PRINCIPAL -----------------------
 export default function Promotions() {
-  const [promotions, setPromotions] = useState(initialPromotions);
-  const [specials, setSpecials] = useState(initialSpecials);
+  const [products, setProducts] = useState([]);
 
+  const [promotions, setPromotions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [modalPromoOpen, setModalPromoOpen] = useState(false);
-  const [modalSpecialOpen, setModalSpecialOpen] = useState(false);
-
   const [editPromo, setEditPromo] = useState(null);
-  const [editSpecial, setEditSpecial] = useState(null);
+  // Estado persistente del formulario del modal
+  const [promoFormData, setPromoFormData] = useState(null);
 
-  // ----------------------- LÓGICA PROMOCIONES -----------------------
-  const handleSavePromo = (promo) => {
-    if (promo.id) {
-      setPromotions(promotions.map(p => p.id === promo.id ? promo : p));
-    } else {
-      setPromotions([...promotions, { ...promo, id: Date.now(), products: promo.products || [] }]);
+  // Cargar promociones y productos desde el backend
+  useEffect(() => {
+    setLoading(true);
+    Promise.all([
+      fetch("http://localhost/Vivanda/admin/backend/promotions.php").then(res => res.json()),
+      fetch("http://localhost/Vivanda/admin/backend/productos.php").then(res => res.json())
+    ])
+      .then(([promos, prods]) => {
+        setPromotions(promos);
+        setProducts(prods);
+      })
+      .catch(setError)
+      .finally(() => setLoading(false));
+  }, []);
+
+  // Guardar promoción (crear o editar)
+  const handleSavePromo = async (promo) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const method = promo.id_promocion ? "PUT" : "POST";
+      const res = await fetch("http://localhost/Vivanda/admin/backend/promotions.php", {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(promo)
+      });
+      const data = await res.json();
+      if (data.status === "success") {
+        // Recargar promociones
+        const promos = await fetch("http://localhost/Vivanda/admin/backend/promotions.php").then(r => r.json());
+        setPromotions(promos);
+        setModalPromoOpen(false);
+        setEditPromo(null);
+      } else {
+        setError(data.message || "Error al guardar");
+      }
+    } catch (e) {
+      setError("Error de red");
+    } finally {
+      setLoading(false);
     }
-    setModalPromoOpen(false);
-    setEditPromo(null);
   };
 
+  // Editar promoción
   const handleEditPromo = (promo) => {
     setEditPromo(promo);
+    setPromoFormData({
+      ...promo,
+      productos: promo.productos || []
+    });
     setModalPromoOpen(true);
   };
 
-  const handleDeletePromo = (id) => {
-    setPromotions(promotions.filter(p => p.id !== id));
+  // Eliminar promoción
+  const handleDeletePromo = async (id_promocion) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`http://localhost/Vivanda/admin/backend/promotions.php?id_promocion=${id_promocion}`, { method: "DELETE" });
+      const data = await res.json();
+      if (data.status === "success") {
+        setPromotions(promotions.filter(p => p.id_promocion !== id_promocion));
+      } else {
+        setError(data.message || "Error al eliminar");
+      }
+    } catch (e) {
+      setError("Error de red");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // ----------------------- LÓGICA ESPECIALES -----------------------
@@ -82,35 +113,42 @@ export default function Promotions() {
       <Sidebar />
       <div className="promotions-content">
         <h1>Gestión de Promociones y Descuentos</h1>
-
-        {/* --- SECCIÓN PROMOCIONES --- */}
-        <button className="btn-add-promo" onClick={() => { setEditPromo(null); setModalPromoOpen(true); }}>
+        <button className="btn-add-promo" onClick={() => {
+          setEditPromo(null);
+          if (!promoFormData) {
+            setPromoFormData(null);
+          }
+          setModalPromoOpen(true);
+        }}>
           Agregar Promoción
         </button>
-
+        {loading && <p>Cargando...</p>}
+        {error && <p style={{color:'red'}}>{error}</p>}
         <div className="promotions-table-wrapper">
           <table className="promotions-table">
             <thead>
               <tr>
-                <th>Nombre</th>
-                <th>Tipo</th>
-                <th>Valor</th>
-                <th>Productos Aplicables</th>
+                <th>Título</th>
+                <th>Descripción</th>
+                <th>Descuento (%)</th>
+                <th>Productos</th>
+                <th>Vigencia</th>
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {promotions.map(p => (
-                <tr key={p.id}>
-                  <td>{p.name}</td>
-                  <td>{p.type}</td>
-                  <td>{p.type === "Porcentaje" ? `${p.value}%` : p.value}</td>
-                  <td>{p.products.length > 0 ? p.products.join(", ") : "Todos"}</td>
-                  <td>{p.active ? "Activo" : "Inactivo"}</td>
+                <tr key={p.id_promocion}>
+                  <td>{p.titulo}</td>
+                  <td>{p.descripcion}</td>
+                  <td>{p.descuento_porcentaje}</td>
+                  <td>{p.productos && p.productos.length > 0 ? p.productos.join(", ") : "Todos"}</td>
+                  <td>{p.fecha_inicio} a {p.fecha_fin}</td>
+                  <td>{Number(p.activo) === 1 ? "Activo" : "Inactivo"}</td>
                   <td>
                     <button className="btn-edit-promo" onClick={() => handleEditPromo(p)}>Editar</button>
-                    <button className="btn-delete-promo" onClick={() => handleDeletePromo(p.id)}>Eliminar</button>
+                    <button className="btn-delete-promo" onClick={() => handleDeletePromo(p.id_promocion)}>Eliminar</button>
                   </td>
                 </tr>
               ))}
@@ -118,42 +156,14 @@ export default function Promotions() {
           </table>
         </div>
 
-        {/* --- SECCIÓN DESCUENTOS ESPECIALES --- */}
-        <div className="discounts-section">
-          <h2>Descuentos Especiales</h2>
-          <button className="btn-add-promo" onClick={() => { setEditSpecial(null); setModalSpecialOpen(true); }}>
-            Agregar Descuento Especial
-          </button>
-          <div className="discount-cards">
-            {specials.map(s => (
-              <div key={s.id} className="discount-card">
-                <h3>{s.name}</h3>
-                <p>{s.description}</p>
-                <p>Estado: **{s.active ? "Activo" : "Inactivo"}**</p>
-                <div>
-                  <button className="btn-edit-promo" onClick={() => handleEditSpecial(s)}>Editar</button>
-                  <button className="btn-delete-promo" onClick={() => handleDeleteSpecial(s.id)}>Eliminar</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* --- MODALES --- */}
         {modalPromoOpen && (
           <PromotionModal
             promo={editPromo}
-            productsList={initialProducts}
-            onClose={() => { setModalPromoOpen(false); setEditPromo(null); }}
+            onClose={() => setModalPromoOpen(false)}
             onSavePromo={handleSavePromo}
-          />
-        )}
-
-        {modalSpecialOpen && (
-          <SpecialDiscountModal
-            special={editSpecial}
-            onClose={() => { setModalSpecialOpen(false); setEditSpecial(null); }}
-            onSaveSpecial={handleSaveSpecial}
+            productsList={products}
+            formData={promoFormData}
+            setFormData={setPromoFormData}
           />
         )}
       </div>
@@ -161,161 +171,107 @@ export default function Promotions() {
   );
 }
 
-// ----------------------- MODAL PROMOCIÓN (Tipo, Valor, Productos) -----------------------
-function PromotionModal({ promo, productsList, onClose, onSavePromo }) {
+function PromotionModal({ promo, onClose, onSavePromo, productsList, formData, setFormData }) {
   const isEditing = !!promo;
-  const [form, setForm] = useState(
-    isEditing
-      ? promo
-      : { name: "", type: "Porcentaje", value: 0, active: true, products: [] }
+  // ...eliminar lógica de categorías y productos filtrados...
+
+  // Estado del formulario: persistente
+  const [form, setForm] = useState(() =>
+    formData || { titulo: "", descripcion: "", descuento_porcentaje: 0, fecha_inicio: "", fecha_fin: "", activo: 1, productos: [] }
   );
 
-  const [inputValue, setInputValue] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
+  // Sincronizar cambios locales con el estado externo
+  useEffect(() => {
+    setFormData && setFormData(form);
+    // eslint-disable-next-line
+  }, [form]);
 
-  const handleInputChange = (e) => {
-    const value = e.target.value;
-    setInputValue(value);
-    if (value) {
-      setSuggestions(productsList.filter(p => p.toLowerCase().includes(value.toLowerCase()) && !form.products.includes(p)));
-    } else {
-      setSuggestions([]);
-    }
+  const handleChange = e => {
+    const { name, value, type, checked } = e.target;
+    setForm(f => ({ ...f, [name]: type === "checkbox" ? (checked ? 1 : 0) : value }));
   };
 
-  const addProduct = (product) => {
-    setForm({ ...form, products: [...form.products, product] });
-    setInputValue("");
-    setSuggestions([]);
-  };
+  // ...eliminar handlers de categoría y producto...
 
-  const removeProduct = (product) => {
-    setForm({ ...form, products: form.products.filter(p => p !== product) });
-  };
-  
   const handleSave = () => {
-    // Validación simple
-    if (!form.name || form.value === undefined || form.value < 0) {
-      alert("Por favor, completa el nombre y el valor de la promoción.");
+    if (!form.titulo || !form.descuento_porcentaje) {
+      alert("Completa los campos obligatorios");
       return;
     }
     onSavePromo(form);
-  }
+    // Limpiar el estado persistente solo al guardar
+    setFormData && setFormData(null);
+  };
 
   return (
     <div className="modal-bg-promo">
       <div className="modal-promo">
         <h2>{isEditing ? "Editar Promoción" : "Nueva Promoción"}</h2>
-
-        <input
-          type="text"
-          placeholder="Nombre de la Promoción"
-          value={form.name}
-          onChange={e => setForm({ ...form, name: e.target.value })}
-        />
-
-        <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}>
-          <option value="Porcentaje">Porcentaje (%)</option>
-          <option value="Envío">Envío (Monto Fijo)</option>
-        </select>
-
-        <input
-          type="number"
-          placeholder={form.type === "Porcentaje" ? "Valor (0-100)" : "Valor (Monto Fijo)"}
-          value={form.value}
-          onChange={e => setForm({ ...form, value: Number(e.target.value) })}
-        />
-
-        <div className="product-list">
-          <h4>Productos Aplicables</h4>
-          {/* Contenedor clave para el despliegue de sugerencias */}
-          <div className="search-container"> 
+        <div style={{marginBottom: 12}}>
+          <label style={{fontWeight:'bold'}}>Título de la promoción</label>
+          <input
+            type="text"
+            name="titulo"
+            placeholder="Título"
+            value={form.titulo}
+            onChange={handleChange}
+            style={{width:'100%'}}
+          />
+        </div>
+        <div style={{marginBottom: 12}}>
+          <label style={{fontWeight:'bold'}}>Descripción de la promoción</label>
+          <textarea
+            name="descripcion"
+            placeholder="Descripción"
+            value={form.descripcion}
+            onChange={handleChange}
+            style={{width:'100%'}}
+          />
+        </div>
+        {/* Campos de categoría y producto eliminados */}
+        <div style={{marginBottom: 12}}>
+          <label style={{fontWeight:'bold'}}>Descuento (%)</label>
+          <input
+            type="number"
+            name="descuento_porcentaje"
+            placeholder="Descuento (%)"
+            value={form.descuento_porcentaje}
+            onChange={handleChange}
+            style={{width:'100%'}}
+          />
+        </div>
+        <div style={{marginBottom: 12, display:'flex', gap:8}}>
+          <div style={{flex:1}}>
+            <label style={{fontWeight:'bold'}}>Fecha de inicio</label>
             <input
-              type="text"
-              placeholder="Buscar producto para agregar..."
-              value={inputValue}
-              onChange={handleInputChange}
+              type="date"
+              name="fecha_inicio"
+              value={form.fecha_inicio || ""}
+              onChange={handleChange}
+              style={{width:'100%'}}
             />
-            {suggestions.length > 0 && (
-              <ul className="suggestions">
-                {suggestions.map((p, i) => (
-                  <li key={i} onClick={() => addProduct(p)}>{p}</li>
-                ))}
-              </ul>
-            )}
           </div>
-          <ul className="selected-products">
-            {form.products.map((p, i) => (
-              <li key={i}>
-                {p} <button type="button" onClick={() => removeProduct(p)}>X</button>
-              </li>
-            ))}
-          </ul>
+          <div style={{flex:1}}>
+            <label style={{fontWeight:'bold'}}>Fecha de expiración</label>
+            <input
+              type="date"
+              name="fecha_fin"
+              value={form.fecha_fin || ""}
+              onChange={handleChange}
+              style={{width:'100%'}}
+            />
+          </div>
         </div>
-
-        <label className="label-active">
+        <div style={{marginBottom: 12}}>
+          <label style={{fontWeight:'bold'}}>¿Activo?</label>
           <input
             type="checkbox"
-            checked={form.active}
-            onChange={e => setForm({ ...form, active: e.target.checked })}
+            name="activo"
+            checked={!!form.activo}
+            onChange={handleChange}
+            style={{marginLeft:8}}
           />
-          Activo
-        </label>
-
-        <div className="modal-actions-promo">
-          <button className="btn-save-promo" onClick={handleSave}>Guardar</button>
-          <button className="btn-cancel-promo" onClick={onClose}>Cancelar</button>
         </div>
-      </div>
-    </div>
-  );
-}
-
-// ----------------------- MODAL DESCUENTO ESPECIAL (Nombre, Descripción) -----------------------
-function SpecialDiscountModal({ special, onClose, onSaveSpecial }) {
-  const isEditing = !!special;
-  const [form, setForm] = useState(
-    isEditing
-      ? special
-      : { name: "", description: "", active: true }
-  );
-
-  const handleSave = () => {
-    // Validación simple
-    if (!form.name || !form.description) {
-      alert("Por favor, completa el nombre y la descripción del descuento.");
-      return;
-    }
-    onSaveSpecial(form);
-  }
-
-  return (
-    <div className="modal-bg-promo">
-      <div className="modal-promo">
-        <h2>{isEditing ? "Editar Descuento Especial" : "Nuevo Descuento Especial"}</h2>
-
-        <input
-          type="text"
-          placeholder="Nombre del Descuento"
-          value={form.name}
-          onChange={e => setForm({ ...form, name: e.target.value })}
-        />
-
-        <textarea
-          placeholder="Descripción del Descuento (e.g., Pedidos superiores a S/150)"
-          value={form.description}
-          onChange={e => setForm({ ...form, description: e.target.value })}
-        />
-
-        <label className="label-active">
-          <input
-            type="checkbox"
-            checked={form.active}
-            onChange={e => setForm({ ...form, active: e.target.checked })}
-          />
-          Activo
-        </label>
-
         <div className="modal-actions-promo">
           <button className="btn-save-promo" onClick={handleSave}>Guardar</button>
           <button className="btn-cancel-promo" onClick={onClose}>Cancelar</button>

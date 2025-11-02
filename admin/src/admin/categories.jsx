@@ -1,60 +1,122 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../componentes/sidebar.jsx";
 import "../assets/css/categories.css";
 
-const initialCategories = [
-  { id: 1, name: "Electrónica", description: "Productos electrónicos", status: "activo" },
-  { id: 2, name: "Ropa", description: "Vestimenta y accesorios", status: "activo" },
-  { id: 3, name: "Hogar", description: "Productos para el hogar", status: "inactivo" },
- { id: 1, name: "Electrónica", description: "Productos electrónicos", status: "activo" },
-  { id: 2, name: "Ropa", description: "Vestimenta y accesorios", status: "activo" },
-   { id: 1, name: "Electrónica", description: "Productos electrónicos", status: "activo" },
-  { id: 2, name: "Ropa", description: "Vestimenta y accesorios", status: "activo" },
-   { id: 1, name: "Electrónica", description: "Productos electrónicos", status: "activo" },
-  { id: 2, name: "Ropa", description: "Vestimenta y accesorios", status: "activo" },
-   { id: 1, name: "Electrónica", description: "Productos electrónicos", status: "activo" },
-  { id: 2, name: "Ropa", description: "Vestimenta y accesorios", status: "activo" },
-   { id: 1, name: "Electrónica", description: "Productos electrónicos", status: "activo" },
-  { id: 2, name: "Ropa", description: "Vestimenta y accesorios", status: "activo" },
-   { id: 1, name: "Electrónica", description: "Productos electrónicos", status: "activo" },
-  { id: 2, name: "Ropa", description: "Vestimenta y accesorios", status: "activo" },
-  
-];
+const API_URL = "http://localhost/Vivanda/admin/backend/categories.php";
 
 export default function Categories() {
-  const [categories, setCategories] = useState(initialCategories);
+  const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editCategory, setEditCategory] = useState(null);
+  const [previewImg, setPreviewImg] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const filteredCategories = categories.filter(c =>
-    c.name.toLowerCase().includes(search.toLowerCase())
+  // Cargar categorías
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        setCategories(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setError("Error al cargar categorías");
+        setCategories([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Filtrar categorías
+  const filteredCategories = categories.filter(
+    (c) =>
+      (c.nombre_categoria || "")
+        .toLowerCase()
+        .includes(search.toLowerCase()) ||
+      (c.descripcion || "")
+        .toLowerCase()
+        .includes(search.toLowerCase())
   );
 
-  const handleSave = (cat) => {
-    if (!cat) return;
-    if (cat.id) {
-      setCategories(categories.map(c => c.id === cat.id ? cat : c));
-    } else {
-      setCategories([...categories, { ...cat, id: Date.now() }]);
+  // Guardar cambios (crear/editar)
+  const handleSave = async () => {
+    if (!editCategory) return;
+    try {
+      const formData = new FormData();
+      if (editCategory.id_categoria)
+        formData.append("id_categoria", editCategory.id_categoria);
+      formData.append("nombre_categoria", editCategory.nombre_categoria);
+      formData.append("descripcion", editCategory.descripcion || "");
+      if (editCategory.imagen instanceof File) {
+        formData.append("imagen", editCategory.imagen);
+      }
+      if (editCategory.id_categoria) formData.append("_method", "PUT");
+
+      // Log para depuración: mostrar el contenido del FormData
+      for (let pair of formData.entries()) {
+        console.log(pair[0]+ ': ' + pair[1]);
+      }
+
+      const res = await fetch(API_URL, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.status === "success") {
+        const res = await fetch(API_URL);
+        const updated = await res.json();
+        setCategories(updated);
+        setModalOpen(false);
+        setEditCategory(null);
+        setPreviewImg(null);
+        setError(null);
+      } else {
+        setError(data.message || "Error al guardar cambios");
+        if (data.message) alert(data.message);
+      }
+    } catch {
+      setError("Error de red al guardar");
     }
-    setModalOpen(false);
-    setEditCategory(null);
   };
 
+  // Editar categoría
   const handleEdit = (cat) => {
-    setEditCategory(cat);
+    setEditCategory({ ...cat, imagen: null });
+    setPreviewImg(
+      cat.imagen_url
+        ? `http://localhost/Vivanda/cliente/public/${cat.imagen_url}`
+        : null
+    );
     setModalOpen(true);
   };
 
-  const handleDelete = (id) => {
-    setCategories(categories.filter(c => c.id !== id));
+  // Borrar categoría
+  const handleDelete = async (id_categoria) => {
+    if (!window.confirm("¿Seguro que deseas eliminar esta categoría?")) return;
+    try {
+      const res = await fetch(API_URL, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id_categoria }),
+      });
+      const data = await res.json();
+      if (data.status === "success") {
+        setCategories(categories.filter((c) => c.id_categoria !== id_categoria));
+        setError(null);
+      } else {
+        setError(data.message || "Error al borrar");
+      }
+    } catch {
+      setError("Error de red al borrar");
+    }
   };
 
   return (
     <div className="layout">
       <Sidebar />
-
       <div className="content">
         <h1>Categorías</h1>
 
@@ -63,65 +125,116 @@ export default function Categories() {
             type="text"
             placeholder="Buscar categoría..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
           />
-          <button className="btn-add" onClick={() => setModalOpen(true)}>Crear Categoría</button>
+          <button
+            className="btn-add"
+            onClick={() => {
+              setEditCategory({ nombre_categoria: "", descripcion: "", imagen: null });
+              setPreviewImg(null);
+              setModalOpen(true);
+            }}
+          >
+            Crear Categoría
+          </button>
         </div>
 
-        <div className="categories-table-wrapper">
-          <table className="categories-table">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredCategories.map(cat => (
-                <tr key={cat.id}>
-                  <td>{cat.name}</td>
-                  <td>{cat.description}</td>
-                  <td><span className={`status ${cat.status}`}>{cat.status}</span></td>
-                  <td>
-                    <button className="btn-edit" onClick={() => handleEdit(cat)}>Editar</button>
-                    <button className="btn-delete" onClick={() => handleDelete(cat.id)}>Borrar</button>
-                  </td>
+        {error && <div className="error-msg">{error}</div>}
+
+        {loading ? (
+          <div className="loading">Cargando...</div>
+        ) : (
+          <div className="categories-table-wrapper">
+            <table className="categories-table">
+              <thead>
+                <tr>
+                  <th>Imagen</th>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                  <th>Acciones</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filteredCategories.map((cat) => (
+                  <tr key={cat.id_categoria}>
+                    <td>
+                      {cat.imagen_url ? (
+                        <img
+                          src={`http://localhost/Vivanda/cliente/public/${cat.imagen_url}`}
+                          alt={cat.nombre_categoria}
+                          style={{ width: 50, height: 50, objectFit: "cover" }}
+                        />
+                      ) : (
+                        "Sin imagen"
+                      )}
+                    </td>
+                    <td>{cat.nombre_categoria}</td>
+                    <td>{cat.descripcion}</td>
+                    <td>
+                      <button className="btn-edit" onClick={() => handleEdit(cat)}>
+                        Editar
+                      </button>
+                      <button
+                        className="btn-delete"
+                        onClick={() => handleDelete(cat.id_categoria)}
+                      >
+                        Borrar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
         {modalOpen && (
           <div className="modal-bg" onClick={() => setModalOpen(false)}>
-            <div className="modal" onClick={e => e.stopPropagation()}>
-              <h2>{editCategory ? "Editar Categoría" : "Nueva Categoría"}</h2>
+            <div className="modal" onClick={(e) => e.stopPropagation()}>
+              <h2>{editCategory?.id_categoria ? "Editar Categoría" : "Nueva Categoría"}</h2>
 
               <input
                 type="text"
                 placeholder="Nombre"
-                value={editCategory?.name || ""}
-                onChange={e => setEditCategory({ ...editCategory, name: e.target.value })}
+                value={editCategory?.nombre_categoria || ""}
+                onChange={(e) =>
+                  setEditCategory({ ...editCategory, nombre_categoria: e.target.value })
+                }
               />
               <input
                 type="text"
                 placeholder="Descripción"
-                value={editCategory?.description || ""}
-                onChange={e => setEditCategory({ ...editCategory, description: e.target.value })}
+                value={editCategory?.descripcion || ""}
+                onChange={(e) =>
+                  setEditCategory({ ...editCategory, descripcion: e.target.value })
+                }
               />
-              <select
-                value={editCategory?.status || "activo"}
-                onChange={e => setEditCategory({ ...editCategory, status: e.target.value })}
-              >
-                <option value="activo">Activo</option>
-                <option value="inactivo">Inactivo</option>
-              </select>
+              <div>
+                <label>Imagen</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    setEditCategory({ ...editCategory, imagen: e.target.files[0] });
+                    setPreviewImg(URL.createObjectURL(e.target.files[0]));
+                  }}
+                />
+                {previewImg && (
+                  <img
+                    src={previewImg}
+                    alt="Preview"
+                    style={{ width: 80, height: 80, objectFit: "cover", marginTop: 8 }}
+                  />
+                )}
+              </div>
 
               <div className="modal-actions">
-                <button className="btn-save" onClick={() => handleSave(editCategory)}>Guardar</button>
-                <button className="btn-cancel" onClick={() => setModalOpen(false)}>Cancelar</button>
+                <button className="btn-save" onClick={handleSave}>
+                  Guardar
+                </button>
+                <button className="btn-cancel" onClick={() => setModalOpen(false)}>
+                  Cancelar
+                </button>
               </div>
             </div>
           </div>

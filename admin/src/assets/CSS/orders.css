@@ -57,7 +57,8 @@ h1 {
 }
 
 .summary-box.pendiente { background: #ff9800; color: #fff; }
-.summary-box.completado { background: #4caf50; color: #fff; }
+.summary-box.en-camino { background: #00bcd4; color: #000; }
+.summary-box.entregado { background: #2196f3; color: #fff; }
 .summary-box.cancelado { background: #f44336; color: #fff; }
 
 /* Tabla */
@@ -96,6 +97,8 @@ h1 {
 .status.pendiente { background: #ff9800; color: #000; }
 .status.completado { background: #4caf50; color: #000; }
 .status.cancelado { background: #f44336; color: #fff; }
+.status.entregado { background: #2196f3; color: #fff; }
+.status.en-camino { background: #00bcd4; color: #000; }
 
 /* Botones */
 .btn-details {

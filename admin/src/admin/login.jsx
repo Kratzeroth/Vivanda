@@ -1,13 +1,33 @@
+
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../assets/css/login.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login:", { email, password });
+    setError("");
+    try {
+  const res = await fetch("http://localhost/Vivanda/admin/backend/login.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: email, password })
+      });
+      const data = await res.json();
+      if (data.status === "success") {
+        // Puedes guardar info en localStorage/sessionStorage si lo deseas
+        navigate("/dashboard");
+      } else {
+        setError(data.message || "Error de autenticación");
+      }
+    } catch (err) {
+      setError("Error de red o servidor");
+    }
   };
 
   return (
@@ -15,18 +35,17 @@ export default function Login() {
       <div className="login-box">
         <h1 className="login-title">Admin Panel</h1>
         <p className="login-subtitle">Bienvenido, inicia sesión</p>
-
+        {error && <div className="login-error">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Correo</label>
+            <label>Usuario</label>
             <input
-              type="email"
-              placeholder="admin@empresa.com"
+              type="text"
+              placeholder="elias_admin"
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
-
           <div className="form-group">
             <label>Contraseña</label>
             <input
@@ -36,7 +55,6 @@ export default function Login() {
               required
             />
           </div>
-
           <button type="submit" className="btn-login">Ingresar</button>
         </form>
       </div>

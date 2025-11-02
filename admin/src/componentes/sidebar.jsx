@@ -14,7 +14,6 @@ export default function Sidebar() {
         <li><Link to="/finance">Finanzas</Link></li>
         <li><Link to="/reports">Reportes</Link></li>
         <li><Link to="/categories">Categorías</Link></li>
-        <li><Link to="/coupons">Cupones</Link></li>
         <li><Link to="/banners">Banners</Link></li>
         <li><Link to="/users">Usuarios</Link></li>
         <li><Link to="/settings">Configuración</Link></li>

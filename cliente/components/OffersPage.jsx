@@ -3,13 +3,23 @@ import { Header } from "../components/header";
 import { Footer } from "../components/footer";
 import "../src/assets/CSS/offers.css";
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import { Carousel } from 'bootstrap'; // importar clase Carousel
+import { Carousel } from 'bootstrap';
 
 export const OffersPage = () => {
   const [offers, setOffers] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [banners, setBanners] = useState([]);
 
   useEffect(() => {
+    // Traer banners
+    fetch("http://localhost/Vivanda/admin/backend/banners.php")
+      .then((res) => res.json())
+      .then((data) => {
+        setBanners(Array.isArray(data) ? data.filter(b => b.activo !== 0) : []);
+      })
+      .catch((err) => console.error("Error cargando banners:", err));
+
+    // Traer ofertas
     fetch("http://localhost/Vivanda/cliente/backend/prod_all.php")
       .then((res) => res.json())
       .then((data) => {
@@ -41,39 +51,54 @@ export const OffersPage = () => {
         }
       })
       .catch((err) => console.error("Error cargando ofertas:", err));
+  }, []);
 
-    // Inicializar carrusel manualmente
+  useEffect(() => {
+    // Inicializar carrusel manualmente cuando banners cambian
     const carouselElement = document.getElementById('carouselExampleDark');
-    if (carouselElement) {
+    if (carouselElement && banners.length > 0) {
       new Carousel(carouselElement, {
         interval: 2000,
         ride: 'carousel'
       });
     }
-  }, []);
+  }, [banners]);
 
   return (
     <>
       <Header />
 
-      {/* Carrusel solo con imágenes */}
+      {/* Carrusel dinámico con banners de la base de datos */}
       <section className="offers-carousel">
         <div id="carouselExampleDark" className="carousel carousel-dark slide">
           <div className="carousel-indicators">
-            <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
-            <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            {banners.map((b, idx) => (
+              <button
+                key={b.id_banner}
+                type="button"
+                data-bs-target="#carouselExampleDark"
+                data-bs-slide-to={idx}
+                className={idx === 0 ? "active" : ""}
+                aria-current={idx === 0 ? "true" : undefined}
+                aria-label={`Slide ${idx + 1}`}
+              ></button>
+            ))}
           </div>
           <div className="carousel-inner">
-            <div className="carousel-item active">
-              <img src="/images/offert1.png" className="d-block w-100 carousel-main-img" alt="Banner 1" />
-            </div>
-            <div className="carousel-item">
-              <img src="/images/offert2.png" className="d-block w-100 carousel-main-img" alt="Banner 2" />
-            </div>
-            <div className="carousel-item">
-              <img src="/images/offert3.png" className="d-block w-100 carousel-main-img" alt="Banner 3" />
-            </div>
+            {banners.map((b, idx) => (
+              <div className={`carousel-item${idx === 0 ? " active" : ""}`} key={b.id_banner}>
+                <img
+                  src={`/${b.imagen_url}`}
+                  className="d-block w-100 carousel-main-img"
+                  alt={b.titulo || `Banner ${idx + 1}`}
+                />
+                {b.titulo && (
+                  <div className="carousel-caption d-none d-md-block">
+                    <h5>{b.titulo}</h5>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
           <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
             <span className="carousel-control-prev-icon" aria-hidden="true"></span>

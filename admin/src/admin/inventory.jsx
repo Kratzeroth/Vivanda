@@ -1,45 +1,205 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../componentes/sidebar.jsx";
 import "../assets/css/inventory.css";
 
-const initialProducts = [
-  { id: 1, name: "Laptop Gamer", category: "Electrónica", stock: 12, price: 4500, provider: "Proveedor A" },
-  { id: 2, name: "Mouse Logitech", category: "Accesorios", stock: 45, price: 120, provider: "Proveedor B" },
-  { id: 3, name: "Monitor 144Hz", category: "Electrónica", stock: 8, price: 980, provider: "Proveedor C" },
-  { id: 4, name: "Teclado Mecánico", category: "Accesorios", stock: 30, price: 250, provider: "Proveedor B" },
-  { id: 5, name: "Auriculares Bluetooth", category: "Accesorios", stock: 25, price: 150, provider: "Proveedor D" },
-  { id: 6, name: "Webcam 1080p", category: "Electrónica", stock: 15, price: 300, provider: "Proveedor C" }
-];
+const API_URL = "http://localhost/Vivanda/admin/backend/inventory.php";
+
+function ProductModal({ product, onClose, onSave }) {
+  const [form, setForm] = useState(
+    product || {
+      nombre_producto: "",
+      precio: "",
+      descripcion: "",
+      imagen: null,
+      id_categoria: ""
+    }
+  );
+
+  const [categorias, setCategorias] = useState([]);
+
+  useEffect(() => {
+    // Solo cargar categorías si es agregar (no editar)
+    if (!product) {
+      fetch("http://localhost/Vivanda/admin/backend/inventory.php?categorias=1")
+        .then((res) => res.json())
+        .then((data) => setCategorias(data))
+        .catch(() => setCategorias([]));
+    }
+  }, [product]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
+
+  const handleFileChange = (e) => {
+    setForm({ ...form, imagen: e.target.files[0] });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    if (product?.id_producto) formData.append("id_producto", product.id_producto);
+
+    // enviar todos los campos
+    for (const key in form) {
+      formData.append(key, form[key]);
+    }
+
+    onSave(formData);
+  };
+
+  return (
+    <div className="modal-bg">
+      <div className="modal">
+        <h2>{product ? "Editar Producto" : "Nuevo Producto"}</h2>
+
+        <form onSubmit={handleSubmit}>
+          {/* Solo mostrar select de categoría si es agregar */}
+          {!product && (
+            <div>
+              <label>Categoría</label>
+              <select
+                name="id_categoria"
+                value={form.id_categoria}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Seleccione una categoría</option>
+                {categorias.map((cat) => (
+                  <option key={cat.id_categoria} value={cat.id_categoria}>
+                    {cat.nombre_categoria}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          <div>
+            <label>Nombre del Producto</label>
+            <input
+              type="text"
+              name="nombre_producto"
+              value={form.nombre_producto}
+              onChange={handleChange}
+              placeholder="Ej. Manzana Fuji"
+              required
+            />
+          </div>
+
+          <div>
+            <label>Descripción</label>
+            <textarea
+              name="descripcion"
+              value={form.descripcion}
+              onChange={handleChange}
+              placeholder="Ej. Manzana dulce y jugosa"
+              required
+            />
+          </div>
+
+          <div>
+            <label>Precio (S/)</label>
+            <input
+              type="number"
+              name="precio"
+              value={form.precio}
+              onChange={handleChange}
+              placeholder="Ej. 2.50"
+              required
+            />
+          </div>
+
+          <div>
+            <label>Imagen</label>
+            <input
+              type="file"
+              name="imagen"
+              onChange={handleFileChange}
+              accept="image/*"
+            />
+          </div>
+
+          <div className="modal-actions">
+            <button type="submit" className="btn-save">
+              Guardar
+            </button>
+            <button type="button" className="btn-cancel" onClick={onClose}>
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
 
 export default function Inventory() {
-  const [products, setProducts] = useState(initialProducts);
-  const [filter, setFilter] = useState({ search: "", category: "all" });
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editProduct, setEditProduct] = useState(null);
 
-  const filteredProducts = products.filter(p =>
-    (filter.category === "all" || p.category === filter.category) &&
-    p.name.toLowerCase().includes(filter.search.toLowerCase())
-  );
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
-  const handleSave = (product) => {
-    const updatedProduct = { ...product, status: product.stock > 0 ? "Activo" : "Agotado" };
-    if (product.id) {
-      setProducts(products.map(p => p.id === product.id ? updatedProduct : p));
-    } else {
-      setProducts([...products, { ...updatedProduct, id: Date.now() }]);
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+      setProducts(data);
+    } catch (err) {
+      setError("Error al cargar productos");
+    } finally {
+      setLoading(false);
     }
-    setModalOpen(false);
-    setEditProduct(null);
   };
 
-  const handleEdit = (product) => {
-    setEditProduct(product);
-    setModalOpen(true);
+  const handleSave = async (formData) => {
+    setLoading(true);
+    try {
+      if (editProduct) formData.append("_method", "PUT");
+
+      const response = await fetch(API_URL, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+
+      if (data.status === "success") {
+        await fetchProducts();
+        setModalOpen(false);
+        setEditProduct(null);
+      } else {
+        setError(data.message || "Error al guardar");
+      }
+    } catch {
+      setError("Error de red");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDelete = (id) => {
-    setProducts(products.filter(p => p.id !== id));
+  const handleDelete = async (id_producto) => {
+    if (!window.confirm("¿Seguro que deseas eliminar este producto?")) return;
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}?id_producto=${id_producto}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+      if (data.status === "success") {
+        setProducts(products.filter((p) => p.id_producto !== id_producto));
+      } else {
+        setError(data.message || "Error al eliminar");
+      }
+    } catch {
+      setError("Error de red");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -48,121 +208,82 @@ export default function Inventory() {
       <div className="inventory-content">
         <h1>Inventario de Productos</h1>
 
-        {/* Filtros */}
-        <div className="inventory-filters">
-          <input
-            type="text"
-            placeholder="Buscar producto..."
-            value={filter.search}
-            onChange={e => setFilter({ ...filter, search: e.target.value })}
-          />
-          <select
-            value={filter.category}
-            onChange={e => setFilter({ ...filter, category: e.target.value })}
-          >
-            <option value="all">Todas las categorías</option>
-            <option value="Electrónica">Electrónica</option>
-            <option value="Accesorios">Accesorios</option>
-          </select>
-        </div>
+        {loading && <p>Cargando...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
 
-        {/* Botón agregar */}
-        <button className="btn-add" onClick={() => setModalOpen(true)}>Agregar Producto</button>
+        <button className="btn-add" onClick={() => setModalOpen(true)}>
+          Agregar Producto
+        </button>
 
-        {/* Tabla de inventario */}
         <div className="inventory-table-wrapper">
           <table className="inventory-table">
             <thead>
               <tr>
                 <th>Producto</th>
+                <th>Descripción</th>
+                <th>Precio (S/)</th>
                 <th>Categoría</th>
-                <th>Stock</th>
-                <th>Precio</th>
-                <th>Proveedor</th>
-                <th>Estado</th>
+                <th>Imagen</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {filteredProducts.map(p => (
-                <tr key={p.id}>
-                  <td>{p.name}</td>
-                  <td>{p.category}</td>
-                  <td>{p.stock}</td>
-                  <td>{p.price}</td>
-                  <td>{p.provider}</td>
-                  <td>{p.status}</td>
-                  <td>
-                    <button className="btn-edit" onClick={() => handleEdit(p)}>Editar</button>
-                    <button className="btn-delete" onClick={() => handleDelete(p.id)}>Eliminar</button>
-                  </td>
+              {products.length > 0 ? (
+                products.map((product) => (
+                  <tr key={product.id_producto}>
+                    <td>{product.nombre_producto}</td>
+                    <td>{product.descripcion}</td>
+                    <td>{product.precio}</td>
+                    <td>{product.nombre_categoria || "—"}</td>
+                    <td>
+                      {product.imagen_url ? (
+                        <img
+                          src={`http://localhost/Vivanda/cliente/public/${product.imagen_url}`}
+                          alt={product.nombre_producto}
+                          style={{ width: "60px", height: "60px", objectFit: "cover" }}
+                        />
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td>
+                      <button
+                        className="btn-edit"
+                        onClick={() => {
+                          setEditProduct(product);
+                          setModalOpen(true);
+                        }}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        className="btn-delete"
+                        onClick={() => handleDelete(product.id_producto)}
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6">No hay productos registrados.</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
 
-        {/* Modal para agregar/editar */}
         {modalOpen && (
           <ProductModal
             product={editProduct}
-            onClose={() => { setModalOpen(false); setEditProduct(null); }}
+            onClose={() => {
+              setModalOpen(false);
+              setEditProduct(null);
+            }}
             onSave={handleSave}
           />
         )}
-      </div>
-    </div>
-  );
-}
-
-function ProductModal({ product, onClose, onSave }) {
-  const [form, setForm] = useState(product || { name: "", category: "Electrónica", stock: 0, price: 0, provider: "" });
-
-  return (
-    <div className="modal-bg">
-      <div className="modal">
-        <h2>{product ? "Editar Producto" : "Nuevo Producto"}</h2>
-
-        <input
-          type="text"
-          placeholder="Nombre"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-        />
-
-        <select
-          value={form.category}
-          onChange={(e) => setForm({ ...form, category: e.target.value })}
-        >
-          <option value="Electrónica">Electrónica</option>
-          <option value="Accesorios">Accesorios</option>
-        </select>
-
-        <input
-          type="number"
-          placeholder="Stock"
-          value={form.stock}
-          onChange={(e) => setForm({ ...form, stock: parseInt(e.target.value) })}
-        />
-
-        <input
-          type="number"
-          placeholder="Precio"
-          value={form.price}
-          onChange={(e) => setForm({ ...form, price: parseFloat(e.target.value) })}
-        />
-
-        <input
-          type="text"
-          placeholder="Proveedor"
-          value={form.provider}
-          onChange={(e) => setForm({ ...form, provider: e.target.value })}
-        />
-
-        <div className="modal-actions">
-          <button className="btn-save" onClick={() => onSave(form)}>Guardar</button>
-          <button className="btn-cancel" onClick={onClose}>Cancelar</button>
-        </div>
       </div>
     </div>
   );
