@@ -16,7 +16,7 @@ export const Cart = () => {
       return;
     }
 
-    fetch(`http://localhost/Vivanda/Vivanda/backend/get_cart.php?id_usuario=${usuario.id}`)
+    fetch(`http://localhost/Vivanda/cliente/backend/get_cart.php?id_usuario=${usuario.id}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.status === "success") {
@@ -32,7 +32,7 @@ export const Cart = () => {
     if (!usuario) return;
 
     try {
-      const res = await fetch("http://localhost/Vivanda/Vivanda/backend/removeCart.php", {
+      const res = await fetch("http://localhost/Vivanda/cliente/backend/removeCart.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

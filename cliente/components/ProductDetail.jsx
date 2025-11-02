@@ -1,3 +1,4 @@
+import Swal from "sweetalert2";
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Header } from "./header";
@@ -12,11 +13,14 @@ export const ProductDetail = () => {
 
   const [showLoginAlert, setShowLoginAlert] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favLoading, setFavLoading] = useState(false);
 
   const user = JSON.parse(localStorage.getItem("usuario") || "null");
 
+  // Cargar producto y favoritos
   useEffect(() => {
-    fetch("http://localhost/Vivanda/Vivanda/backend/prod_all.php")
+    fetch("http://localhost/Vivanda/cliente/backend/prod_all.php")
       .then((res) => res.json())
       .then((data) => {
         if (data.status === "success") {
@@ -40,6 +44,68 @@ export const ProductDetail = () => {
       .finally(() => setLoading(false));
   }, [id]);
 
+  // Consultar si es favorito
+  useEffect(() => {
+    if (!user || !id) return;
+    setFavLoading(true);
+    fetch(`http://localhost/Vivanda/cliente/backend/favoritos.php?id_usuario=${user.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success" && Array.isArray(data.favoritos)) {
+          setIsFavorite(data.favoritos.includes(Number(id)) || data.favoritos.includes(id));
+        }
+      })
+      .catch(() => setIsFavorite(false))
+      .finally(() => setFavLoading(false));
+  }, [user, id]);
+  // Manejar favoritos
+  const handleToggleFavorite = async () => {
+    if (!user) {
+      setShowLoginAlert(true);
+      return;
+    }
+    if (favLoading) return;
+    setFavLoading(true);
+    try {
+      const url = "http://localhost/Vivanda/cliente/backend/favoritos.php";
+      const method = isFavorite ? "DELETE" : "POST";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id_usuario: user.id, id_producto: id }),
+      });
+      const data = await res.json();
+      if (data.status === "success") {
+        // Volver a consultar favoritos para asegurar el estado correcto
+        const favRes = await fetch(`http://localhost/Vivanda/cliente/backend/favoritos.php?id_usuario=${user.id}`);
+        const favData = await favRes.json();
+        if (favData.status === "success" && Array.isArray(favData.favoritos)) {
+          setIsFavorite(favData.favoritos.includes(Number(id)) || favData.favoritos.includes(id));
+        }
+        Swal.fire({
+          icon: 'success',
+          title: isFavorite ? 'Quitado de favoritos' : 'Agregado a favoritos',
+          showConfirmButton: false,
+          timer: 1200
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: data.message || 'Error al actualizar favoritos',
+        });
+      }
+    } catch (e) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error de red',
+        text: 'No se pudo actualizar favoritos',
+      });
+    } finally {
+      setFavLoading(false);
+    }
+  };
+
   const handleAddToCart = async () => {
     if (!user) {
       setShowLoginAlert(true);
@@ -48,7 +114,7 @@ export const ProductDetail = () => {
 
     try {
       const res = await fetch(
-        "http://localhost/Vivanda/Vivanda/backend/cart.php",
+        "http://localhost/Vivanda/cliente/backend/cart.php",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -90,6 +156,7 @@ export const ProductDetail = () => {
               alt={product.nombre_producto}
               className="product-image zoom"
             />
+            {/* Botón de favorito */}
           </div>
 
           {/* Línea divisoria */}
@@ -127,12 +194,31 @@ export const ProductDetail = () => {
               </div>
             </div>
 
-            <button
-              className="btn btn-primary add-to-cart-btn"
-              onClick={handleAddToCart}
-            >
-              Agregar al carrito
-            </button>
+            <div className="cart-buttons-container">
+              <button
+                className="cart-btn-modern add-to-cart-btn"
+                onClick={handleAddToCart}
+              >
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m5-9v9m4-9v9m1-13h.01" /></svg>
+                Agregar al carrito
+              </button>
+              <button
+                className="cart-btn-modern go-to-cart-btn"
+                onClick={() => navigate('/carrito')}
+              >
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+                Ir al carrito
+              </button>
+              <button
+                onClick={handleToggleFavorite}
+                title={isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
+                className="favorite-btn"
+                style={{ minWidth: 0 }}
+                disabled={favLoading}
+              >
+                {isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
+              </button>
+            </div>
           </div>
         </div>
       </main>

@@ -48,7 +48,7 @@ export const ProductsPage = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost/Vivanda/Vivanda/backend/prod_all.php")
+    fetch("http://localhost/Vivanda/cliente/backend/prod_all.php")
       .then((res) => res.json())
       .then((data) => {
         if (data.status === "success") {

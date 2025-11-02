@@ -32,9 +32,11 @@ try {
 
     $id_carrito = $carrito['id_carrito'];
 
-    // 2️⃣ Crear pedido
-    $stmt = $pdo->prepare("INSERT INTO pedidos (id_usuario, total, estado) VALUES (?, ?, 'pagado')");
-    $stmt->execute([$id_usuario, $total]);
+    // 2️⃣ Crear pedido con fecha_entrega y estado válido
+    $fecha_entrega = date('Y-m-d H:i:s', strtotime('+2 days'));
+    $estado = 'pendiente';
+    $stmt = $pdo->prepare("INSERT INTO pedidos (id_usuario, total, fecha_entrega, estado) VALUES (?, ?, ?, ?)");
+    $stmt->execute([$id_usuario, $total, $fecha_entrega, $estado]);
     $id_pedido = $pdo->lastInsertId();
 
     // 3️⃣ Insertar detalles del carrito en pedido_detalle

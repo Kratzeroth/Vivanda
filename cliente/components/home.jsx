@@ -109,7 +109,7 @@ export const Home = () => {
       { id: 10, name: "Filete Salmón", price: 25.00, oldPrice: 30.00, img: heroImg, discount: 16.67 }
     ];
 
-    fetch("http://localhost/Vivanda/Vivanda/backend/cats.php")
+    fetch("http://localhost/Vivanda/cliente/backend/cats.php")
       .then(res => res.json())
       .then(data => {
         if (data.status === "success") {
@@ -122,7 +122,7 @@ export const Home = () => {
       })
       .catch(() => setCategories(fallbackProducts.slice(0, 6).map((p, i) => ({ id: i + 1, name: p.name.split(' ')[0], img: heroImg }))));
 
-    fetch("http://localhost/Vivanda/Vivanda/backend/prod_all.php")
+    fetch("http://localhost/Vivanda/cliente/backend/prod_all.php")
       .then(res => res.json())
       .then(data => {
         if (data.status === "success") {

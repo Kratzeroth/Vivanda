@@ -1,174 +1,208 @@
 // src/pages/Checkout.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "./header";
 import { Footer } from "./footer";
 import Swal from "sweetalert2";
-import "../src/assets/CSS/checkout.css";
+import { useNavigate } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "animate.css";
 
 export const Checkout = () => {
-  const [paymentMethod, setPaymentMethod] = useState("card");
+  const [cartItems, setCartItems] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [cardNumber, setCardNumber] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [cvv, setCvv] = useState("");
+  const [cardName, setCardName] = useState("");
   const [currency, setCurrency] = useState("PEN");
+  const exchangeRate = 3.7;
 
-  const totalPEN = 120.5;
-  const exchangeRate = 3.64;
-  const total = currency === "PEN" ? totalPEN : totalPEN / exchangeRate;
+  const navigate = useNavigate();
 
-  const handlePayment = () => {
-    Swal.fire({
-      title: "¡Pago exitoso!",
-      text: `Tu pago de ${
-        currency === "PEN" ? "S/" : "US$"
-      } ${total.toFixed(2)} fue procesado correctamente.`,
-      icon: "success",
-      confirmButtonText: "Aceptar",
-      confirmButtonColor: "#e60023",
-      showClass: {
-        popup: "animate__animated animate__zoomIn",
-      },
-      hideClass: {
-        popup: "animate__animated animate__zoomOut",
-      },
-    });
+  // Formateo de inputs
+  const handleCardNumberChange = (e) => {
+    let value = e.target.value.replace(/\D/g, "").slice(0, 16);
+    value = value.replace(/(\d{4})(?=\d)/g, "$1 ");
+    setCardNumber(value);
+  };
+  const handleExpiryChange = (e) => {
+    let value = e.target.value.replace(/\D/g, "").slice(0, 4);
+    if (value.length > 2) value = value.slice(0, 2) + "/" + value.slice(2);
+    setExpiry(value);
+  };
+  const handleCvvChange = (e) => setCvv(e.target.value.replace(/\D/g, "").slice(0, 3));
+  const handleCardNameChange = (e) => setCardName(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, ""));
+
+  // Cargar carrito
+  useEffect(() => {
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    if (!usuario) return navigate("/login");
+
+    fetch(`http://localhost/Vivanda/cliente/backend/get_cart.php?id_usuario=${usuario.id}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          setCartItems(data.productos);
+          const totalCart = data.productos.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+          setTotal(totalCart);
+        } else {
+          console.warn("Carrito vacío o error:", data);
+        }
+      })
+      .catch(err => console.error("Error cargando carrito:", err));
+  }, [navigate]);
+
+  // Validación de tarjeta
+  const validateCardForm = () => {
+    if (!cardNumber || !expiry || !cvv || !cardName) {
+      Swal.fire("Error", "Por favor completa todos los campos de la tarjeta", "error");
+      return false;
+    }
+    if (!/^\d{16}$/.test(cardNumber.replace(/\s/g, ""))) {
+      Swal.fire("Error", "Número de tarjeta inválido", "error");
+      return false;
+    }
+    if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+      Swal.fire("Error", "Fecha de expiración inválida (MM/AA)", "error");
+      return false;
+    }
+    if (!/^\d{3}$/.test(cvv)) {
+      Swal.fire("Error", "CVV inválido (deben ser 3 dígitos)", "error");
+      return false;
+    }
+    return true;
+  };
+
+  // Manejar pago y registrar en DB
+  const handlePayment = async () => {
+    if (!validateCardForm()) return;
+
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    if (!usuario) return;
+
+    try {
+      const res = await fetch("http://localhost/Vivanda/cliente/backend/process_payment.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id_usuario: usuario.id,
+          total: total,
+          metodo_pago: "tarjeta"
+        }),
+      });
+
+      const data = await res.json();
+      if (data.status === "success") {
+        Swal.fire({
+          title: "¡Pago exitoso!",
+          text: `Tu pago de ${currency === "PEN" ? "S/" : "US$"} ${currency === "PEN" ? total.toFixed(2) : (total / exchangeRate).toFixed(2)} fue procesado correctamente.`,
+          icon: "success",
+          confirmButtonText: "Aceptar",
+          confirmButtonColor: "#e60023",
+        });
+        setCartItems([]);
+        setTotal(0);
+      } else {
+        Swal.fire("Error", data.message, "error");
+      }
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "No se pudo procesar el pago", "error");
+    }
   };
 
   return (
     <>
       <Header />
-
-      <div className="checkout-container">
-        <h1 className="title animate__animated animate__fadeInDown">
-          💳 Pasarela de Pago
-        </h1>
-
-        <div className="checkout-grid">
-          {/* Izquierda: formulario */}
-          <div className="checkout-left animate__animated animate__fadeInLeft">
-            {/* Selección de moneda */}
-            <div className="currency-select card-box">
-              <label>Moneda: </label>
-              <select
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-              >
-                <option value="PEN">Soles (S/)</option>
-                <option value="USD">Dólares (US$)</option>
-              </select>
-            </div>
-
-            {/* Métodos de pago */}
-            <div className="payment-methods card-box animate__animated animate__fadeInUp">
-              <h3>Método de pago</h3>
-              <label>
-                <input
-                  type="radio"
-                  value="card"
-                  checked={paymentMethod === "card"}
-                  onChange={() => setPaymentMethod("card")}
-                />
-                Tarjeta (Visa/MasterCard/Amex)
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  value="yape"
-                  checked={paymentMethod === "yape"}
-                  onChange={() => setPaymentMethod("yape")}
-                />
-                Yape
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  value="plin"
-                  checked={paymentMethod === "plin"}
-                  onChange={() => setPaymentMethod("plin")}
-                />
-                Plin
-              </label>
-            </div>
-
-            {/* Formulario dinámico */}
-            <div className="payment-form card-box animate__animated animate__fadeInUp">
-              {paymentMethod === "card" && (
-                <form>
-                  <div className="form-group">
-                    <label>Número de tarjeta</label>
-                    <input type="text" placeholder="**** **** **** ****" />
-                  </div>
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label>Expiración</label>
-                      <input type="text" placeholder="MM/AA" />
-                    </div>
-                    <div className="form-group">
-                      <label>CVV</label>
-                      <input type="password" placeholder="***" />
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label>Nombre en la tarjeta</label>
-                    <input type="text" placeholder="Diego Tataje" />
-                  </div>
-                </form>
-              )}
-
-              {paymentMethod === "yape" && (
-                <div className="qr-payment">
-                  <p>Escanea el QR con Yape:</p>
-                  <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=YAPE-987654321`}
-                    alt="QR Yape"
-                  />
-                  <p className="phone">987 654 321</p>
+      <h1 className="mb-4 fw-bold pt-4 text-center">Pasarela de Pago</h1>
+      <div className="row gx-0 gy-4 justify-content-center w-100 mx-0 px-4 px-md-6 animate__animated animate__fadeIn">
+        {/* Formulario de tarjeta */}
+        <div className="col-12 col-lg-7 px-2 px-lg-4">
+          <div className="card border-0 shadow-lg mb-4">
+            <div className="card-body p-4">
+              <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-2">
+                <h4 className="card-title mb-0">Pago con Tarjeta</h4>
+                <select className="form-select w-auto" value={currency} onChange={e => setCurrency(e.target.value)}>
+                  <option value="PEN">Soles (S/)</option>
+                  <option value="USD">Dólares (US$)</option>
+                </select>
+              </div>
+              <form autoComplete="off">
+                <div className="mb-3">
+                  <label className="form-label">Número de tarjeta</label>
+                  <input type="text" className="form-control" placeholder="**** **** **** ****"
+                    value={cardNumber} onChange={handleCardNumberChange} inputMode="numeric" maxLength={19} autoComplete="cc-number" />
                 </div>
-              )}
-
-              {paymentMethod === "plin" && (
-                <div className="qr-payment">
-                  <p>Escanea el QR con Plin:</p>
-                  <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PLIN-912345678`}
-                    alt="QR Plin"
-                  />
-                  <p className="phone">912 345 678</p>
+                <div className="row mb-3">
+                  <div className="col-6">
+                    <label className="form-label">Fecha de expiración</label>
+                    <input type="text" className="form-control" placeholder="MM/AA"
+                      value={expiry} onChange={handleExpiryChange} inputMode="numeric" maxLength={5} autoComplete="cc-exp" />
+                  </div>
+                  <div className="col-6">
+                    <label className="form-label">CVV</label>
+                    <input type="password" className="form-control" placeholder="***"
+                      value={cvv} onChange={handleCvvChange} inputMode="numeric" maxLength={3} autoComplete="cc-csc" />
+                  </div>
                 </div>
-              )}
+                <div className="mb-3">
+                  <label className="form-label">Nombre</label>
+                  <input type="text" className="form-control" placeholder="Ingresar su nombre"
+                    value={cardName} onChange={handleCardNameChange} maxLength={40} autoComplete="cc-name" />
+                </div>
+                <button type="button" className="btn btn-danger w-100 fw-bold py-2" onClick={handlePayment}>
+                  Confirmar Pago
+                </button>
+              </form>
             </div>
           </div>
+        </div>
 
-          {/* Derecha: resumen y confianza */}
-          <div className="checkout-right animate__animated animate__fadeInRight">
-            <div className="checkout-summary card-box">
-              <h2>Resumen de tu pedido</h2>
-              <p>Total a pagar:</p>
-              <h3>
-                {currency === "PEN" ? "S/" : "US$"} {total.toFixed(2)}
-              </h3>
-              <button className="confirm-btn" onClick={handlePayment}>
-                Confirmar Pago
-              </button>
-            </div>
-
-            <div className="trust-box card-box">
-              <p>🔒 Pago 100% seguro</p>
-              <div className="cards">
-                <img src="https://img.icons8.com/color/48/visa.png" alt="Visa" />
-                <img
-                  src="https://img.icons8.com/color/48/mastercard.png"
-                  alt="MasterCard"
-                />
-                <img
-                  src="https://img.icons8.com/color/48/amex.png"
-                  alt="Amex"
-                />
+        {/* Resumen del pedido */}
+        <div className="col-12 col-lg-5 px-2 px-lg-4">
+          <div className="card border-0 shadow-lg mb-4">
+            <div className="card-body p-4">
+              <h4 className="card-title mb-3">Resumen de tu pedido</h4>
+              {cartItems.length === 0 ? (
+                <div className="alert alert-info">Tu carrito está vacío</div>
+              ) : (
+                <ul className="list-group mb-3">
+                  {cartItems.map(item => {
+                    const itemTotal = currency === "PEN" ? item.precio * item.cantidad : (item.precio * item.cantidad) / exchangeRate;
+                    return (
+                      <li key={item.id_producto} className="list-group-item d-flex align-items-center flex-wrap py-3">
+                        {item.imagen && <img src={item.imagen} alt={item.nombre_producto} style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '8px', marginRight: '12px' }} />}
+                        <div className="flex-grow-1">
+                          <span className="fw-semibold d-block">{item.nombre_producto}</span>
+                          <span className="text-muted">Cantidad: <span className="badge bg-primary rounded-pill">{item.cantidad}</span></span>
+                        </div>
+                        <span className="ms-2 text-secondary fw-bold">{currency === "PEN" ? "S/" : "US$"} {itemTotal.toFixed(2)}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+              <div className="d-flex justify-content-between align-items-center border-top pt-3">
+                <span className="fw-bold">Total:</span>
+                <span className="fs-5 fw-bold text-danger">
+                  {currency === "PEN" ? "S/ " + total.toFixed(2) : "US$ " + (total / exchangeRate).toFixed(2)}
+                </span>
               </div>
-              <small>Protección de comprador garantizada.</small>
+            </div>
+          </div>
+          <div className="card border-0 shadow-sm mb-4">
+            <div className="card-body text-center p-3">
+              <p className="mb-2"><span role="img" aria-label="secure">🔒</span> Pago 100% seguro</p>
+              <div className="d-flex justify-content-center gap-2 mb-2 flex-wrap">
+                <img src="https://img.icons8.com/color/48/visa.png" alt="Visa" />
+                <img src="https://img.icons8.com/color/48/mastercard.png" alt="MasterCard" />
+                <img src="https://img.icons8.com/color/48/amex.png" alt="Amex" />
+              </div>
+              <small className="text-muted">Protección de comprador garantizada.</small>
             </div>
           </div>
         </div>
       </div>
-
       <Footer />
     </>
   );

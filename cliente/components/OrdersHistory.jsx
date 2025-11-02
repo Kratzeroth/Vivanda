@@ -1,309 +1,355 @@
-import React, { useState, useMemo } from "react";
+// src/pages/OrdersHistory.jsx
+import React, { useState, useEffect } from "react";
 import { Header } from "./header";
 import { Footer } from "./footer";
 import Swal from "sweetalert2";
-import "../src/assets/CSS/ordersHistory.css";
-import "animate.css"; 
 
+import "animate.css";
 
-const initialOrders = [
-  {
-    id: "ORD-20250901-001",
-    date: "2025-09-01",
-    status: "Pendiente de pago",
-    canCancel: true,
-    canReturn: false,
-    totalPEN: 120.5,
-    items: [
-      { sku: "P001", title: "Café Orgánico 500g", qty: 2, pricePEN: 25.9, img: "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=400&q=80" },
-      { sku: "P002", title: "Cuchara Medidora", qty: 1, pricePEN: 9.7, img: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=400&q=80" },
-    ],
-    tracking: [
-      { date: "2025-09-01", text: "Pedido recibido", location: "Lima, PE" },
-    ],
-    reviews: [],
-  },
-  {
-    id: "ORD-20250825-045",
-    date: "2025-08-25",
-    status: "En camino",
-    canCancel: false,
-    canReturn: false,
-    totalPEN: 349.0,
-    items: [
-      { sku: "P100", title: "Patineta Eléctrica TG-2", qty: 1, pricePEN: 349.0, img: "https://itmbikes.com/wp-content/uploads/2024/02/patinenta-electrica-tg2-1.jpg" },
-    ],
-    tracking: [
-      { date: "2025-08-26", text: "Despachado desde almacén", location: "Callao, PE" },
-      { date: "2025-08-27", text: "En tránsito", location: "Lima - Distribución" },
-    ],
-    reviews: [],
-  },
-  {
-    id: "ORD-20250712-202",
-    date: "2025-07-12",
-    status: "Entregado",
-    canCancel: false,
-    canReturn: true,
-    totalPEN: 89.0,
-    items: [
-      { sku: "Lego-001", title: "Set LEGO Star Wars", qty: 1, pricePEN: 89.0, img: "https://assets.nintendo.com/image/upload/q_auto/f_auto/ncom/software/switch/70010000018041/e52844f237f452c187db5daec14c3300f45d7be100c1dcff88c7188c8b9b48a9" },
-    ],
-    tracking: [
-      { date: "2025-07-13", text: "Entregado", location: "A. Miraflores" },
-    ],
-    reviews: [
-      { sku: "Lego-001", rating: 5, comment: "Excelente calidad y entrega rápida", date: "2025-07-20" },
-    ],
-  },
-];
 
 export const OrdersHistory = () => {
-  const [orders, setOrders] = useState(initialOrders);
-  const [activeTab, setActiveTab] = useState("Todos");
-  const tabs = ["Todos", "Pendientes", "Finalizados"];
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [trackingModal, setTrackingModal] = useState(false); // State for tracking modal
+  const [activeTab, setActiveTab] = useState('Todos');
 
-  const updateOrder = (id, patch) => {
-    setOrders((prev) => prev.map(o => o.id === id ? { ...o, ...patch } : o));
-  };
 
-  const filteredOrders = useMemo(() => {
-    if (activeTab === "Todos") return orders;
-    
-    const statusMap = {
-      "Pendientes": ["Pendiente de pago", "Procesando", "Enviado", "En camino"],
-      "Finalizados": ["Entregado", "Cancelado", "Devuelto"],
-    };
-    
-    const statuses = statusMap[activeTab];
-    return orders.filter(order => statuses.includes(order.status));
-  }, [orders, activeTab]);
 
-  const handleCancel = async (order) => {
-    if (!order.canCancel) {
-      Swal.fire("No disponible", "Este pedido no puede cancelarse.", "info");
-      return;
-    }
+  const handleTrackOrder = (order) => {
+    setSelectedOrder(order);
+    setTrackingModal(true);
+  };
 
-    const { value } = await Swal.fire({
-      title: `Cancelar ${order.id}?`,
-      text: "¿Estás seguro que quieres cancelar este pedido?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Sí, cancelar",
-      cancelButtonText: "No",
-    });
-    if (value) {
-      updateOrder(order.id, { status: "Cancelado", canCancel: false });
-      setOrders((prev) => prev.map(o => o.id === order.id ? {
-        ...o,
-        tracking: [...o.tracking, { date: new Date().toISOString().split("T")[0], text: "Pedido cancelado por el usuario", location: "" }],
-      } : o));
-      Swal.fire("Cancelado", "Tu pedido fue cancelado.", "success");
-    }
-  };
+  const closeTrackingModal = () => {
+    setTrackingModal(false);
+    setSelectedOrder(null);
+  };
 
-  const handleReturn = async (order) => {
-    if (!order.canReturn) {
-      Swal.fire("No disponible", "No puedes solicitar devolución para este pedido.", "info");
-      return;
-    }
 
-    const { value: reason } = await Swal.fire({
-      title: `Solicitar devolución - ${order.id}`,
-      input: "textarea",
-      inputPlaceholder: "Describe el motivo de la devolución...",
-      showCancelButton: true,
-      confirmButtonText: "Enviar solicitud",
-      cancelButtonText: "Cancelar",
-      inputValidator: (value) => !value && "Describe el motivo.",
-    });
 
-    if (reason) {
-      updateOrder(order.id, { status: "Devuelto", canReturn: false });
-      setOrders((prev) => prev.map(o => o.id === order.id ? {
-        ...o,
-        tracking: [...o.tracking, { date: new Date().toISOString().split("T")[0], text: "Solicitud de devolución enviada", location: "" }],
-      } : o));
-      Swal.fire("Solicitud enviada", "La solicitud de devolución fue enviada.", "success");
-    }
-  };
+  const getTrackingSteps = (status, orderDate) => {
+    const baseDate = new Date(orderDate);
+    const steps = [
+      { label: "Pedido recibido", date: new Date(baseDate), completed: true },
+      { label: "Preparando el pedido", date: new Date(baseDate.setDate(baseDate.getDate() + 1)), completed: status !== "pendiente" },
+      { label: "En camino", date: new Date(baseDate.setDate(baseDate.getDate() + 2)), completed: status === "en camino" || status === "enviado" || status === "entregado" },
+      { label: "Entregado", date: new Date(baseDate.setDate(baseDate.getDate() + 3)), completed: status === "entregado" },
+    ];
+    return steps;
+  };
 
-  const handleViewTracking = (order) => {
-    const timeline = order.tracking.map(t => `<li style="font-size:15px; margin-bottom: 5px;"><strong>${t.date}</strong> — ${t.text} ${t.location ? `(${t.location})` : ""}</li>`).join("");
-    Swal.fire({
-      title: `Seguimiento - ${order.id}`,
-      html: `<ul class="swal-tracking" style="list-style: none; padding: 0;">${timeline}</ul>`,
-      width: 600,
-    });
-  };
+  const getDetailedTrackingSteps = (status) => {
+    const steps = [
+      { label: "Pedido realizado", completed: true },
+      { label: "El pedido se pagó correctamente", completed: true },
+      { label: "El almacén comenzó a preparar tu pedido", completed: status !== "pendiente" },
+      { label: "La tarea de recogida se asignó y tu pedido está en espera para la recogida", completed: status !== "pendiente" },
+      { label: "Tus artículos se recogieron y están a la espera de empacarse", completed: status !== "pendiente" },
+      { label: "Tu paquete está a la espera de cargarse en un contenedor para su envío", completed: status === "en camino" || status === "enviado" || status === "entregado" },
+      { label: "En tránsito al almacén del país de destino", completed: status === "enviado" || status === "entregado" },
+      { label: "Llegó al aeropuerto del país de destino", completed: status === "entregado" },
+      { label: "Salió del aeropuerto y está en camino a tu dirección", completed: status === "entregado" },
+      { label: "Llegó y está preparado para la entrega", completed: status === "entregado" },
+      { label: "Pedido entregado", completed: status === "entregado" },
+    ];
+    return steps;
+  };
 
-  const handleReview = async (order, item) => {
-    const { value } = await Swal.fire({
-      title: `Dejar reseña - ${item.title}`,
-      html:
-        `<div style="text-align:left">
-           <label>Calificación:</label>
-           <div id="rating" style="margin:8px 0; display:flex; gap:5px;">
-             <button class="swal-star" data-value="1">★</button>
-             <button class="swal-star" data-value="2">★</button>
-             <button class="swal-star" data-value="3">★</button>
-             <button class="swal-star" data-value="4">★</button>
-             <button class="swal-star" data-value="5">★</button>
-           </div>
-           <textarea id="reviewText" class="swal-textarea" placeholder="Escribe tu reseña..."></textarea>
-         </div>`,
-      showCancelButton: true,
-      confirmButtonText: "Enviar reseña",
-      didOpen: () => {
-        const stars = Swal.getHtmlContainer().querySelectorAll(".swal-star");
-        let selected = 5;
-        stars.forEach(s => {
-          s.style.fontSize = "22px";
-          s.style.marginRight = "6px";
-          s.style.border = "none";
-          s.style.background = "transparent";
-          s.style.cursor = "pointer";
-          s.addEventListener("click", () => {
-            selected = Number(s.getAttribute("data-value"));
-            stars.forEach((st, idx) => {
-              st.style.color = idx < selected ? "#ffb400" : "#ddd";
-            });
-            (Swal.getConfirmButton() || {}).disabled = false;
-            Swal.getPopup().dataset.rating = selected;
-          });
-        });
-        stars.forEach((st, idx) => st.style.color = idx < selected ? "#ffb400" : "#ddd");
-        (Swal.getConfirmButton() || {}).disabled = false;
-      },
-      preConfirm: () => {
-        const rating = Number(Swal.getPopup().dataset.rating || 5);
-        const text = Swal.getHtmlContainer().querySelector("#reviewText").value || "";
-        if (!text) {
-          Swal.showValidationMessage("Escribe algo en la reseña.");
-        }
-        return { rating, text };
-      },
-    });
+  const getLocalTrackingSteps = (status) => {
+    const steps = [
+      { label: "Pedido realizado", completed: true },
+      { label: "Pago confirmado", completed: true },
+      { label: "Preparando el pedido", completed: status !== "pendiente" },
+      { label: "Pedido listo para despacho", completed: status === "en camino" || status === "enviado" || status === "entregado" },
+      { label: "En camino", completed: status === "en camino" || status === "entregado" },
+      { label: "Pedido entregado", completed: status === "entregado" },
+    ];
+    return steps;
+  };
 
-    if (value) {
-      const review = { sku: item.sku, rating: value.rating, comment: value.text, date: new Date().toISOString().split("T")[0] };
-      setOrders(prev => prev.map(o => o.id === order.id ? { ...o, reviews: [...o.reviews, review] } : o));
-      Swal.fire("Gracias", "Tu reseña fue publicada.", "success");
-    }
-  };
+  const formatDate = (date) => {
+    const options = { day: "numeric", month: "short", year: "numeric" };
+    return new Date(date).toLocaleDateString("es-PE", options);
+  };
 
-  const handleViewDetails = (order) => {
-    const html = `
-      <div class="swal-order">
-        <p><strong>Pedido:</strong> ${order.id}</p>
-        <p><strong>Fecha:</strong> ${order.date}</p>
-        <p><strong>Estado:</strong> ${order.status}</p>
-        <hr />
-        <ul style="list-style: none; padding: 0;">
-          ${order.items.map(it => `<li style="margin-bottom: 5px;">${it.qty} x ${it.title} — S/ ${it.pricePEN.toFixed(2)}</li>`).join("")}
-        </ul>
-        <hr />
-        <p><strong>Total:</strong> S/ ${order.totalPEN.toFixed(2)}</p>
-      </div>`;
-    Swal.fire({
-      title: "Detalle de pedido",
-      html,
-      width: 600,
-    });
-  };
+  useEffect(() => {
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    if (!usuario) return;
 
-  return (
-    <>
-      <Header />
+    fetch(`http://localhost/Vivanda/cliente/backend/get_user.php?id=${usuario.id}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          Swal.fire("Error", data.error, "error");
+        } else {
+          const pedidos = data.pedidos.map(p => ({
+            id: p.id_pedido,
+            date: p.fecha_pedido.split(" ")[0],
+            status: p.estado,
+            totalPEN: Number(p.total),
+            fecha_entrega: p.fecha_entrega ? p.fecha_entrega.split(" ")[0] : null,
+            items: p.items.map(it => ({
+              sku: it.id_producto,
+              title: it.nombre_producto,
+              qty: Number(it.cantidad),
+              pricePEN: Number(it.precio_unitario),
+              img: `/images/productos/${it.imagen_url.split("/").pop()}`
+            })),
+            reviews: p.reviews || [] // <--- usar las reseñas del backend
+          }));
+          setOrders(pedidos);
+        }
+      })
+      .catch(err => Swal.fire("Error", err.message, "error"))
+      .finally(() => setLoading(false));
+  }, []);
 
-      <main className="orders-page">
-        <div className="orders-header">
-          <h1>Mis Pedidos</h1>
-          <p>Historial, seguimiento y acciones sobre tus compras.</p>
-        </div>
+  const handleReview = async (order, item) => {
+    const { value } = await Swal.fire({
+      title: `<span style="font-size:1.1rem;font-weight:600;">Dejar reseña - ${item.title}</span>`,
+      html: `
+        <div style="text-align:left; font-family: 'Segoe UI', Arial, sans-serif;">
+          <label style="font-weight:500;">Calificación:</label>
+          <div id="rating" style="margin:8px 0 16px 0; display:flex; gap:6px;">
+            ${[1,2,3,4,5].map(v => `<button class="swal-star" data-value="${v}" style="font-size:24px; background:none; border:none; color:#ddd; cursor:pointer;">★</button>`).join('')}
+          </div>
+          <label style="font-weight:500;">Tu reseña:</label>
+          <textarea id="reviewText" class="swal-textarea" placeholder="Escribe tu reseña..." style="width:100%;min-height:70px;resize:vertical;border-radius:8px;border:1px solid #ddd;padding:8px;margin-top:4px;"></textarea>
+        </div>`,
+      showCancelButton: true,
+      confirmButtonText: "Enviar reseña",
+      customClass: { popup: 'swal2-responsive-modal' },
+      didOpen: () => {
+        const stars = Swal.getHtmlContainer().querySelectorAll(".swal-star");
+        let selected = 5;
+        stars.forEach(s => {
+          s.addEventListener("click", () => {
+            selected = Number(s.getAttribute("data-value"));
+            stars.forEach((st, idx) => st.style.color = idx < selected ? "#ffb400" : "#ddd");
+            Swal.getPopup().dataset.rating = selected;
+          });
+        });
+        stars.forEach((st, idx) => st.style.color = idx < selected ? "#ffb400" : "#ddd");
+      },
+      preConfirm: () => {
+        const rating = Number(Swal.getPopup().dataset.rating || 5);
+        const text = Swal.getHtmlContainer().querySelector("#reviewText").value || "";
+        if (!text) Swal.showValidationMessage("Escribe algo en la reseña.");
+        return { rating, text };
+      }
+    });
 
-        <div className="tabs">
-          {tabs.map(tab => (
-            <button 
-              key={tab} 
-              className={activeTab === tab ? 'active' : ''} 
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
+    if (value) {
+      const review = { sku: item.sku, rating: value.rating, comment: value.text, date: new Date().toISOString().split("T")[0] };
 
-        <div className="orders-list">
-          {filteredOrders.length > 0 ? filteredOrders.map((order) => (
-            <article key={order.id} className="order-card animate__animated animate__fadeInUp">
-              <div className="order-top">
-                <div>
-                  <h3>{order.id}</h3>
-                  <p className="muted">Fecha: {order.date} · Estado: <span className={`status status-${order.status.replace(/\s+/g,'').toLowerCase()}`}>{order.status}</span></p>
-                </div>
-                <div className="order-actions">
-                  <button className="btn small outline" onClick={() => handleViewDetails(order)}>Detalles</button>
-                  <button className="btn small" onClick={() => handleViewTracking(order)}>Seguimiento</button>
-                </div>
-              </div>
+      // Enviar al backend
+      const usuario = JSON.parse(localStorage.getItem("usuario"));
+      fetch("http://localhost/Vivanda/vivanda/backend/add_review.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id_usuario: usuario.id_usuario,
+          id_producto: item.sku,
+          calificacion: review.rating,
+          comentario: review.comment
+        })
+      })
+      .then(res => res.json())
+      .then(resData => {
+        if (resData.success) {
+          setOrders(prev => prev.map(o => o.id === order.id ? { ...o, reviews: [...o.reviews, review] } : o));
+          Swal.fire({
+            icon: "success",
+            title: "¡Gracias!",
+            text: "Tu reseña fue publicada.",
+            timer: 1800,
+            showConfirmButton: false,
+            customClass: { popup: 'swal2-responsive-modal' }
+          });
+        } else {
+          Swal.fire("Error", resData.error || "No se pudo guardar la reseña.", "error");
+        }
+      })
+      .catch(err => Swal.fire("Error", err.message, "error"));
+    }
+  };
 
-              <div className="order-body">
-                <div className="items">
-                  {order.items.map(it => (
-                    <div key={it.sku} className="item">
-                      <img src={it.img} alt={it.title} />
-                      <div className="item-info">
-                        <p className="title">{it.title}</p>
-                        <p className="qty">Cantidad: {it.qty}</p>
-                        <p className="price">S/ {it.pricePEN.toFixed(2)}</p>
-                      </div>
-                      <div className="item-actions">
-                        {order.status === "Entregado" && order.reviews.findIndex(r => r.sku === it.sku) === -1 && <button className="btn outline small" onClick={() => handleReview(order, it)}>Dejar reseña</button>}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+  const statusColors = {
+    pendiente: "orange",
+    "en camino": "blue",
+    enviado: "purple",
+    entregado: "green",
+    cancelado: "red",
+  };
 
-                <div className="order-right">
-                  <div className="summary">
-                    <p>Total</p>
-                    <p className="total">S/ {order.totalPEN.toFixed(2)}</p>
-                  </div>
+  const formatStatus = (status) => {
+    return status
+      .replace(/_/g, " ") // Replace underscores with spaces
+      .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize the first letter of each word
+  };
 
-                  <div className="order-buttons">
-                    {order.canCancel && <button className="btn danger" onClick={() => handleCancel(order)}>Cancelar pedido</button>}
-                    {order.canReturn && <button className="btn outline" onClick={() => handleReturn(order)}>Solicitar devolución</button>}
-                    {!order.canCancel && !order.canReturn && <button className="btn disabled">Sin acciones</button>}
-                  </div>
+  const formatDateRange = (startDate) => {
+    if (!startDate) return "";
+    const start = new Date(startDate);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 5); // ejemplo: entrega en 5 días
+    const options = { day: "numeric", month: "short" };
+    return `${start.toLocaleDateString("es-PE", options)} - ${end.toLocaleDateString("es-PE", options)}`;
+  };
 
-                  <div className="reviews">
-                    {order.reviews.length === 0 ? <small className="muted">Sin reseñas</small> :
-                      order.reviews.map((r, idx) => (
-                        <div key={idx} className="review">
-                          <div className="stars">{'★'.repeat(r.rating)}{'☆'.repeat(5-r.rating)}</div>
-                          <p className="rev-text">{r.comment}</p>
-                          <small className="muted">{r.date}</small>
-                        </div>
-                      ))
-                    }
-                  </div>
-                </div>
-              </div>
+  if (loading) return <p style={{ textAlign: "center", marginTop: "50px" }}>Cargando pedidos...</p>;
 
-              <div className="order-tracking">
-                <strong>Último evento:</strong>
-                <p className="muted">{order.tracking[order.tracking.length - 1]?.date} — {order.tracking[order.tracking.length - 1]?.text}</p>
-              </div>
-            </article>
-          )) : <div className="no-orders">No tienes pedidos en esta categoría.</div>}
-        </div>
-      </main>
+  // Filtrar pedidos según el tab activo
+  let filteredOrders = orders;
+  if (activeTab === 'Pendientes') {
+    filteredOrders = orders.filter(o => {
+      const st = o.status.toLowerCase().replace(/_/g, '');
+      return st === 'pendiente' || st === 'encamino' || st === 'enviado';
+    });
+  } else if (activeTab === 'Finalizados') {
+    filteredOrders = orders.filter(o => {
+      const st = o.status.toLowerCase().replace(/_/g, '');
+      return st === 'entregado';
+    });
+  }
 
-      <Footer />
-    </>
-  );
+  return (
+    <>
+      <Header />
+      <main className="container my-4">
+        <div className="text-center mb-4">
+          <h1 className="display-5">Mis Pedidos</h1>
+        </div>
+        {/* Tabs alineados a la izquierda */}
+        <div className="mb-4 d-flex justify-content-start gap-2">
+          {['Todos', 'Pendientes', 'Finalizados'].map(tab => (
+            <button
+              key={tab}
+              className={`btn ${activeTab === tab ? 'btn-primary' : 'btn-outline-primary'}`}
+              style={{ minWidth: 120 }}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+        <div className="d-flex flex-column gap-4">
+          {filteredOrders.length === 0 && <p className="text-center">No tienes pedidos registrados.</p>}
+          {filteredOrders.map(order => (
+            <div key={order.id} className="card shadow-sm animate__animated animate__fadeInUp mb-3">
+              <div className="card-header d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                  <h5 className="mb-1">
+                    Pedido |{' '}
+                    <span style={{ color: statusColors[formatStatus(order.status).toLowerCase()] || 'black' }}>
+                      {formatStatus(order.status)}
+                    </span>
+                  </h5>
+                  <div className="text-muted small">
+                    Entrega: {formatDateRange(order.fecha_entrega)}
+                  </div>
+                </div>
+              </div>
+              <div className="card-body row gx-4 gy-3">
+                <div className="col-md-8">
+                  {order.items.map(it => (
+                    <div key={it.sku} className="d-flex align-items-center bg-light rounded p-2 mb-2">
+                      <img src={it.img} alt={it.title} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8, marginRight: 12 }} />
+                      <div className="flex-grow-1">
+                        <div className="fw-semibold">{it.title}</div>
+                        <div className="text-muted small">Cantidad: {it.qty}</div>
+                        <div className="fw-bold">S/ {it.pricePEN.toFixed(2)}</div>
+                      </div>
+                      <button className="btn btn-outline-secondary btn-sm ms-2" onClick={() => handleReview(order, it)}>Dejar reseña</button>
+                    </div>
+                  ))}
+                </div>
+                <div className="col-md-4 d-flex flex-column gap-2">
+                  <div className="border rounded p-2 mb-2">
+                    <div className="fw-semibold">Total</div>
+                    <div className="text-success fs-5 fw-bold">S/ {order.totalPEN.toFixed(2)}</div>
+                  </div>
+                  <button className="btn btn-primary mb-2" onClick={() => handleTrackOrder(order)}>Rastrear</button>
+                  <div>
+                    {order.reviews.length === 0 ? (
+                      <small className="text-muted">Sin reseñas</small>
+                    ) : (
+                      order.reviews.map((r, idx) => (
+                        <div key={idx} className="bg-light rounded p-2 mb-1">
+                          <div className="text-warning">{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</div>
+                          <div className="small">{r.comment}</div>
+                          <small className="text-muted">{r.date}</small>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+
+      {/* Modal de rastreo */}
+      {trackingModal && (
+        <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.5)' }} tabIndex="-1">
+          <div className="modal-dialog modal-lg modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Estado del Rastreo</h5>
+                <button type="button" className="btn-close" aria-label="Close" onClick={closeTrackingModal}></button>
+              </div>
+              <div className="modal-body">
+                {selectedOrder && (
+                  <>
+                    <div className="mb-3 text-secondary small">
+                      <b>Pedido ID:</b> {selectedOrder.id} &nbsp;|&nbsp;
+                      <b>Estado:</b> {formatStatus(selectedOrder.status)}
+                    </div>
+                    <hr />
+                    <ul className="list-unstyled">
+                      {getLocalTrackingSteps(selectedOrder.status).map((step, index) => (
+                        <li key={index} className="d-flex align-items-start mb-3">
+                          <div
+                            style={{
+                              width: 14,
+                              height: 14,
+                              borderRadius: '50%',
+                              backgroundColor: step.completed ? 'green' : '#ddd',
+                              marginRight: 14,
+                              marginTop: 4,
+                            }}
+                          ></div>
+                          <div className="flex-grow-1">
+                            <span className={step.completed ? 'fw-semibold' : 'text-muted'}>{step.label}</span>
+                          </div>
+                          {index < getLocalTrackingSteps(selectedOrder.status).length - 1 && (
+                            <div
+                              style={{
+                                width: 2,
+                                height: 40,
+                                backgroundColor: step.completed ? 'green' : '#ddd',
+                                marginLeft: 10,
+                              }}
+                            ></div>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={closeTrackingModal}>Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      <Footer />
+    </>
+  );
 };
 
 export default OrdersHistory;

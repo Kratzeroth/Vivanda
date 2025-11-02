@@ -48,7 +48,7 @@ export const RegisterForm = () => {
         password: formValue.password,
       };
 
-      const res = await fetch("http://localhost/Vivanda/Vivanda/backend/register.php", {
+      const res = await fetch("http://localhost/Vivanda/cliente/backend/register.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

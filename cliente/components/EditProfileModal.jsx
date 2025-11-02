@@ -13,7 +13,7 @@ export const EditProfileModal = ({ user, onUpdate }) => {
 
   useEffect(() => {
     if (user.foto_perfil) {
-      setPreview(`http://localhost/Vivanda/vivanda/backend/${user.foto_perfil}`);
+      setPreview(`http://localhost/Vivanda/cliente/backend/${user.foto_perfil}`);
     } else {
       setPreview(null);
     }
@@ -38,7 +38,7 @@ export const EditProfileModal = ({ user, onUpdate }) => {
     });
     data.append("id_usuario", user.id_usuario);
 
-    fetch("http://localhost/Vivanda/vivanda/backend/update_user.php", {
+    fetch("http://localhost/Vivanda/cliente/backend/update_user.php", {
       method: "POST",
       body: data,
     })

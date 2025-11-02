@@ -30,7 +30,7 @@ export const LoginForm = () => {
 
     if (Object.keys(validateErrors).length === 0) {
       try {
-        const res = await fetch("http://localhost/Vivanda/Vivanda/backend/login.php", {
+        const res = await fetch("http://localhost/Vivanda/cliente/backend/login.php", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formValue),

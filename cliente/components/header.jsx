@@ -24,7 +24,7 @@ export const Header = () => {
   useEffect(() => {
     if (cartOpen && user) {
       fetch(
-        `http://localhost/Vivanda/Vivanda/backend/get_cart.php?id_usuario=${user.id}`
+        `http://localhost/Vivanda/cliente/backend/get_cart.php?id_usuario=${user.id}`
       )
         .then((res) => res.json())
         .then((data) => {
