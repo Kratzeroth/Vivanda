@@ -1,0 +1,158 @@
+
+
+/* Contenido principal */
+.settings-content {
+
+  flex: 1;
+  padding: 25px 30px;
+  height: 100vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  transition: margin-left 0.25s ease;
+}
+
+/* Título principal */
+.settings-content h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* Secciones */
+.settings-section {
+  margin-bottom: 30px;
+}
+
+.settings-section h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  font-weight: 700;
+  border-bottom: 1px solid #333;
+  padding-bottom: 6px;
+}
+
+/* Items dentro de la sección */
+.settings-item {
+
+  display: flex;
+  align-items: center;
+  gap: 12px; 
+  font-size: 16px;
+  padding: 6px 12px;
+  background: #1a1a1a;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  border: 1px solid #333;
+
+}
+
+.settings-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #3498db; /* color del checkbox */
+  cursor: pointer;
+}
+.settings-item label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  cursor: pointer;
+  user-select: none;
+}
+.settings-item label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+}
+
+/* Tabla de roles */
+.settings-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #1a1a1a;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.settings-table th,
+.settings-table td {
+  padding: 10px;
+  border-bottom: 1px solid #333;
+  text-align: left;
+  color: white;
+}
+
+.settings-table th {
+  background: #2c2c2c;
+  font-weight: 600;
+}
+
+.settings-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Botones */
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  background: #3498db;
+  color: white;
+  transition: background 0.25s ease;
+}
+
+.btn:hover { background: #2980b9; }
+
+.btn-danger { background: #e74c3c; }
+.btn-danger:hover { background: #c0392b; }
+
+.btn-warning { background: #f39c12; }
+.btn-warning:hover { background: #d68910; }
+
+/* Scrollbar personalizado */
+.settings-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.settings-content::-webkit-scrollbar-thumb {
+  background-color: #444;
+  border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 1000px) {
+  .settings-content {
+    margin-left: 200px;
+    padding: 20px 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  .settings-content {
+    margin-left: 0; /* sidebar colapsa en móviles */
+    padding: 15px 12px;
+  }
+
+  .settings-section h2 {
+    font-size: 18px;
+  }
+
+  .settings-item label {
+    font-size: 14px;
+  }
+
+  .btn {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+
+  .settings-table th,
+  .settings-table td {
+    padding: 8px;
+    font-size: 13px;
+  }
+}
