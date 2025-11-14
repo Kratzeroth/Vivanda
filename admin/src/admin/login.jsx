@@ -20,7 +20,7 @@ export default function Login() {
       });
       const data = await res.json();
       if (data.status === "success") {
-        // Puedes guardar info en localStorage/sessionStorage si lo deseas
+        localStorage.setItem("adminUsuario", JSON.stringify(data.usuario));
         navigate("/dashboard");
       } else {
         setError(data.message || "Error de autenticación");

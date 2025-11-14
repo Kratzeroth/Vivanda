@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import logo from "../src/assets/logo-Vivanda.png";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../src/assets/CSS/header.css";
-import { Assistant } from "./Assistant"; 
+import Assistant from "./Assistant"; 
 
 export const Header = () => {
   const [user, setUser] = useState(null);

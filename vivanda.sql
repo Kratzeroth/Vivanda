@@ -19,6 +19,22 @@
 --
 -- Table structure for table `banners`
 --
+CREATE TABLE chats (
+    id_chat INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,       -- cliente
+    id_agente INT DEFAULT NULL,    -- agente/admin (opcional)
+    estado ENUM('Abierto', 'Pendiente', 'Cerrado') DEFAULT 'Abierto',
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE mensajes (
+    id_mensaje INT AUTO_INCREMENT PRIMARY KEY,
+    id_chat INT NOT NULL,
+    remitente ENUM('user', 'agent') NOT NULL,
+    texto TEXT NOT NULL,
+    fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_chat) REFERENCES chats(id_chat) ON DELETE CASCADE
+);
+
 
 DROP TABLE IF EXISTS `banners`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
