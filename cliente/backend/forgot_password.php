@@ -41,7 +41,7 @@ $stmt = $pdo->prepare("INSERT INTO password_resets (email, token, expiracion) VA
 $stmt->execute([$email, $token, $expiracion]);
 
 // Link de reseteo
-$resetLink = "http://localhost/Vivanda/vivanda/frontend/reset_password.php?token=$token";
+$resetLink = "http://localhost/Vivanda/cliente/reset_password.php?token=$token";
 
 // ---- Enviar correo con PHPMailer ----
 $mail = new PHPMailer(true);
