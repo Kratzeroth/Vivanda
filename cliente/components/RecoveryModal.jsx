@@ -11,7 +11,7 @@ export const RecoveryModal = ({ onClose }) => {
     }
 
     try {
-      const res = await fetch("http://localhost/Vivanda/Vivanda/backend/forgot_password.php", {
+      const res = await fetch("http://localhost/Vivanda/cliente/backend/forgot_password.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
