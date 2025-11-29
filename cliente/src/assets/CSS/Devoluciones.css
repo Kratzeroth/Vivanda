@@ -96,16 +96,6 @@
     pointer-events: none; 
 }
 
-/* -------------------- SECCIÓN DE ARTÍCULOS EXCLUSIVOS (Venta Sutil) -------------------- */
-
-.flash-deals-section {
-    padding: 60px 5%;
-    background: linear-gradient(135deg, #FFFCF7 0%, #FFE0D3 100%);
-    text-align: center;
-    border-top: 5px solid #E74C3C;
-    border-bottom: 5px solid #E74C3C;
-    box-shadow: 0 0 20px rgba(231, 76, 60, 0.2);
-}
 
 .flash-deals-section h2 {
     color: #E74C3C; 
