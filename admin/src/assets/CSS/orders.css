@@ -1,0 +1,148 @@
+.orders-content {
+  padding: 25px;
+  color: white;
+  height: 100vh; /* Ocupa toda la ventana */
+  background: #0f0f0f;
+  width: 100%;
+  overflow-y: auto; /* Scroll vertical para toda la sección */
+  display: flex;
+  flex-direction: column;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+/* Barra de búsqueda y filtro */
+.orders-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.orders-top input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  background: #2c2c2c;
+  color: white;
+  border: 1px solid #444;
+}
+
+.orders-top select {
+  padding: 10px;
+  border-radius: 6px;
+  background: #2c2c2c;
+  color: white;
+  border: 1px solid #444;
+}
+
+/* Cuadros de resumen */
+.orders-summary {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.summary-box {
+  flex: 1;
+  min-width: 150px;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.summary-box.pendiente { background: #ff9800; color: #fff; }
+.summary-box.en-camino { background: #00bcd4; color: #000; }
+.summary-box.entregado { background: #2196f3; color: #fff; }
+.summary-box.cancelado { background: #f44336; color: #fff; }
+
+/* Tabla */
+.orders-table-wrapper {
+  background: #1a1a1a;
+  padding: 10px;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.orders-table thead {
+  position: sticky;
+  top: 0;
+  background: #1f1f1f;
+  z-index: 1;
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 12px;
+  border-bottom: 1px solid #333;
+  text-align: left;
+}
+
+/* Estados */
+.status {
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 13px;
+}
+.status.pendiente { background: #ff9800; color: #000; }
+.status.completado { background: #4caf50; color: #000; }
+.status.cancelado { background: #f44336; color: #fff; }
+.status.entregado { background: #2196f3; color: #fff; }
+.status.en-camino { background: #00bcd4; color: #000; }
+
+/* Botones */
+.btn-details {
+  background: #2196f3;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.btn-details:hover { background: #1976d2; }
+
+/* Modal */
+.modal-bg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal {
+  background: #1f1f1f;
+  padding: 20px;
+  width: 350px;
+  border-radius: 8px;
+}
+.modal p { margin: 8px 0; }
+.btn-close {
+  background: #e53935;
+  padding: 8px 15px;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+/* Responsive */
+@media(max-width: 800px) {
+  .orders-content { margin-left: 0; padding: 15px; }
+  .orders-top { flex-direction: column; }
+  .summary-box { flex: 1 1 100%; }
+  .modal { width: 90%; }
+}

@@ -1,0 +1,395 @@
+/* -----------------------
+    Layout y contenedor
+----------------------- */
+.promotions-content {
+    padding: 30px;
+    width: 100%;
+    background-color: #121212;
+    min-height: 100vh;
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* -----------------------
+    Títulos
+----------------------- */
+.promotions-content h1 {
+    margin-bottom: 25px;
+    font-size: 32px;
+    text-align: center;
+}
+
+.promotions-content h2 {
+    margin-bottom: 15px;
+    font-size: 24px;
+}
+
+/* -----------------------
+    Botón Agregar
+----------------------- */
+.btn-add-promo {
+    display: inline-block;
+    margin: 10px 0 20px 0;
+    padding: 12px 22px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 16px;
+}
+
+.btn-add-promo:hover {
+    background-color: #0056b3;
+}
+
+/* -----------------------
+    Tabla de Promociones
+----------------------- */
+.promotions-table-wrapper {
+    overflow-x: auto;
+    margin-bottom: 30px;
+}
+
+.promotions-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+}
+
+.promotions-table th,
+.promotions-table td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #333;
+}
+
+.promotions-table th {
+    background-color: #1f1f1f;
+    font-weight: 600;
+}
+
+.promotions-table tr:nth-child(even) {
+    background-color: #1a1a1a;
+}
+
+.promotions-table tr:hover {
+    background-color: #2c2c2c;
+}
+
+/* -----------------------
+    Botones de acciones
+----------------------- */
+.btn-edit-promo,
+.btn-delete-promo {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 2px;
+    transition: 0.3s;
+}
+
+.btn-edit-promo {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.btn-edit-promo:hover {
+    background-color: #1e7e34;
+}
+
+.btn-delete-promo {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.btn-delete-promo:hover {
+    background-color: #a71d2a;
+}
+
+/* -----------------------
+    Descuentos Especiales
+----------------------- */
+.discounts-section {
+    margin-top: 40px;
+}
+
+.discount-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.discount-card {
+    background-color: #1f1f1f;
+    padding: 20px;
+    border-radius: 12px;
+    width: 250px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    transition: 0.3s;
+    font-size: 16px;
+}
+
+.discount-card:hover {
+    background-color: #272727;
+}
+
+.discount-card h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.discount-card p {
+    font-size: 14px;
+    color: #ccc;
+}
+
+/* -----------------------
+    Modal
+----------------------- */
+.modal-bg-promo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-promo {
+    background-color: #1f1f1f;
+    padding: 30px;
+    border-radius: 12px;
+    width: 450px;
+    max-width: 90%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+    font-size: 16px;
+}
+
+.modal-promo h2 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.modal-promo input,
+.modal-promo select,
+.modal-promo textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: none;
+    background-color: #2a2a2a;
+    color: #fff;
+    outline: none;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.modal-promo input::placeholder,
+.modal-promo textarea::placeholder {
+    color: #aaa;
+}
+
+.modal-promo textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.modal-actions-promo {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.btn-save-promo,
+.btn-cancel-promo {
+    flex: 1;
+    padding: 12px 0;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 16px;
+}
+
+.btn-save-promo {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.btn-save-promo:hover {
+    background-color: #1e7e34;
+}
+
+.btn-cancel-promo {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.btn-cancel-promo:hover {
+    background-color: #495057;
+}
+
+/* ========================================================= */
+/* --- ESTILOS CLAVE PARA EL DESPLEGABLE DE PRODUCTOS --- */
+/* ========================================================= */
+
+/* 1. Contenedor de búsqueda: Necesita posicionamiento relativo */
+.search-container {
+    position: relative; 
+    width: 100%;
+    /* Ajuste para que el input dentro no tenga margen inferior que lo separe de la lista */
+    margin-bottom: 0; 
+}
+
+/* 2. Estilo específico del input dentro del contenedor de búsqueda (para consistencia) */
+.search-container input[type="text"] {
+    margin-bottom: 0; /* Asegura que la lista quede pegada */
+}
+
+/* 3. Lista de sugerencias: Se posiciona absolutamente */
+.suggestions {
+    position: absolute; 
+    top: 100%; /* Empieza justo debajo del input */
+    left: 0;
+    z-index: 10; 
+    width: 100%; 
+    max-height: 200px; 
+    overflow-y: auto; 
+    
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #3a3a3a;
+    background-color: #2a2a2a; /* Fondo oscuro consistente con el modal */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    border-radius: 0 0 6px 6px; /* Bordes redondeados solo abajo */
+    color: #fff;
+}
+
+.suggestions li {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.suggestions li:hover {
+    background-color: #3a3a3a;
+}
+
+/* -----------------------
+    Lista de Productos Aplicados (Seleccionados)
+----------------------- */
+.product-list {
+    /* Mantenemos el margin-bottom original aquí */
+    margin-bottom: 15px; 
+    position: relative; /* Asegura que si hay otros elementos no se solapen */
+}
+
+.product-list h4 {
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.selected-products {
+    list-style: none;
+    padding: 10px 0 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.selected-products li {
+    background-color: #3b5998; /* Color para chips de producto */
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+.selected-products button {
+    margin-left: 8px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1; /* Para centrar la X */
+    padding: 0;
+    font-size: 14px;
+}
+
+.selected-products button:hover {
+    color: #ffcccc;
+}
+
+/* -----------------------
+    Checkbox Activo
+----------------------- */
+.label-active {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.label-active input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    /* Ajuste para que los checkbox no hereden los estilos de input del modal */
+    margin: 0;
+    flex-shrink: 0; 
+    background-color: #3a3a3a;
+    border: 1px solid #6c757d;
+}
+
+/* -----------------------
+    Responsive
+----------------------- */
+@media (max-width: 900px) {
+    .discount-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .modal-promo {
+        width: 90%;
+    }
+}
+
+@media (max-width: 500px) {
+    .promotions-table th,
+    .promotions-table td {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
+    .btn-edit-promo,
+    .btn-delete-promo,
+    .btn-add-promo,
+    .btn-save-promo,
+    .btn-cancel-promo {
+        font-size: 14px;
+        padding: 10px; /* Ajuste para que no quede muy pequeño */
+    }
+
+    .modal-promo {
+        padding: 20px;
+    }
+}

@@ -1,0 +1,259 @@
+html, body {
+  height: 100%;      
+  margin: 0;
+}
+
+#root { 
+ display: flex;
+  flex-direction: column;
+  min-height: 100vh; 
+}
+
+main, section {
+  flex: 1;            /* el contenido crece y empuja el footer */
+}
+
+
+
+footer {
+  margin-top: auto;   /* fuerza al footer a quedarse abajo */
+  width: 100%;
+}
+
+:root {
+  --login-grad-start: #6a11cb;
+  --login-grad-end: #2575fc;
+  --login-text: #333;
+  --login-card-bg: #ffffff;
+  --login-input-bg: #f7f7f7;
+  --login-border: #dddddd;
+  --login-link: #6a11cb;
+
+  --radius: 12px;
+  --shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  --pad-box: 32px;
+  --gap: 14px;
+  --box-w: 960px;   /* antes 360px → ahora caja ancha */
+  --fs-title: clamp(22px, 2.2vw, 28px);
+  --fs-text: 16px;
+}
+
+
+/* =======================
+   LOGIN PAGE
+   ======================= */
+.login {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.login-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--login-grad-start), var(--login-grad-end));
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--login-text);
+  position: relative;
+  padding: 40px 20px; /* espacio lateral */
+}
+
+.login-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+.background-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.login-box {
+  position: relative;
+  z-index: 2;
+  width: 90%;                  /* ocupa casi toda la pantalla */
+  max-width: var(--box-w);      /* pero con límite */
+  background: var(--login-card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--pad-box);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-title {
+  font-size: var(--fs-title);
+  font-weight: 700;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  width: 100%;
+  padding: 0 25px;
+}
+
+.login-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--login-border);
+  border-radius: 8px;
+  background: var(--login-input-bg);
+  font-size: var(--fs-text);
+  outline: none;
+  color: var(--login-text);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-input:focus {
+  border-color: var(--login-grad-start);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--login-grad-start) 20%, transparent);
+}
+
+.login-options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.95rem;
+}
+
+.login-forgot {
+  color: var(--login-link);
+  text-decoration: none;
+}
+
+.login-forgot:hover {
+  text-decoration: underline;
+}
+
+.login-btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, var(--login-grad-start), var(--login-grad-end));
+  transition: transform 0.06s ease, opacity 0.2s ease;
+}
+
+.login-btn:hover {
+  opacity: 0.95;
+}
+
+.login-btn:active {
+  transform: translateY(1px);
+}
+
+/* =======================
+   REGISTER PAGE
+   ======================= */
+.register {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.register-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  background: linear-gradient(135deg, var(--login-grad-start), var(--login-grad-end));
+  padding: 40px 20px; /* espacio lateral */
+}
+
+.register-container::before {
+  content: "";
+  background-color: rgba(0, 0, 0, 0.4);
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.register-box {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  width: 90%;            /* ocupa casi todo el ancho */
+  max-width: 960px;      /* límite decente */
+  text-align: center;
+  z-index: 2;
+}
+
+.register-title {
+  font-size: var(--fs-title);
+  font-weight: 700;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.register-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--login-border);
+  border-radius: 8px;
+  background: var(--login-input-bg);
+  font-size: var(--fs-text);
+  outline: none;
+  color: var(--login-text);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.register-input:focus {
+  border-color: var(--login-grad-start);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--login-grad-start) 20%, transparent);
+}
+
+.register-btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, var(--login-grad-start), var(--login-grad-end));
+  transition: transform 0.06s ease, opacity 0.2s ease;
+}
+
+.register-btn:hover {
+  opacity: 0.95;
+}
+
+.register-btn:active {
+  transform: translateY(1px);
+}
+
+.login-link {
+  color: var(--login-grad-end);
+  text-decoration: none;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,105 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  background: #0f0f0f;
+}
+
+/* Fondo centrado */
+.login-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0f0f0f;
+  padding: 20px;
+}
+
+/* Tarjeta */
+.login-box {
+  width: 100%;
+  max-width: 420px;
+  background: #1a1a1a;
+  padding: 45px 35px;
+  border-radius: 12px;
+  border: 1px solid #2b2b2b;
+  box-shadow: 0 0 25px rgba(0,0,0,0.6);
+}
+
+/* Titulos */
+.login-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+}
+
+.login-subtitle {
+  font-size: 14px;
+  text-align: center;
+  color: #9a9a9a;
+  margin-bottom: 25px;
+}
+
+/* Inputs */
+.form-group {
+  margin-bottom: 18px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #d4d4d4;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  background: #0f0f0f;
+  border: 1px solid #3d3d3d;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  transition: 0.25s;
+}
+
+input::placeholder {
+  color: #777;
+}
+
+input:focus {
+  border-color: #888;
+}
+
+/* Botón */
+.btn-login {
+  width: 100%;
+  padding: 12px;
+  background: #ffffff;
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.25s;
+}
+
+.btn-login:hover {
+  background: #cecece;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .login-box {
+    padding: 35px 24px;
+  }
+  .login-title {
+    font-size: 22px;
+  }
+}
