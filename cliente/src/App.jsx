@@ -11,7 +11,10 @@ import { Checkout } from "../components/checkout.jsx";
 import { OrdersHistory } from "../components/OrdersHistory.jsx";
 import { HelpCenter } from "../components/HelpCenter.jsx";
 import { ProductDetail } from "../components/ProductDetail.jsx";
+<<<<<<< HEAD
 import {Devoluciones} from "../components/devoluciones.jsx";
+=======
+>>>>>>> origin/main
 import { AboutUs } from "../components/AboutUs.jsx"; // <-- nueva página
 
 import "animate.css";
@@ -24,7 +27,11 @@ function App() {
     
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
+<<<<<<< HEAD
         <Route path="/returns" element={<Devoluciones />} />
+=======
+
+>>>>>>> origin/main
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/offers" element={<OffersPage />} />
